@@ -1,5 +1,6 @@
+.vs/
 bin/
 obj/
-.vs/
 *.user
-
+_build_check/
+_build_out/
