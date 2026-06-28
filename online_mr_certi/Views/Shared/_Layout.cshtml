@@ -1,4 +1,4 @@
-﻿@using online_mr_certi.Infrastructure
+@using online_mr_certi.Infrastructure
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
     var ctx = HttpContextAccessor.HttpContext;
@@ -13,10 +13,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Online Marriage Certificate System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="icon" type="image/jpeg" href="~/logo2.png" />
+    <link rel="icon" type="image/jpeg" href="~/uniso2.png" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/fonts.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2-bootstrap4.min.css" asp-append-version="true" />
+
+
+
+
+
 
     <style>
         /* ══════════════════════════════
@@ -971,7 +978,7 @@
     <nav class="main-nav">
         <a class="nav-logo" asp-controller="Home" asp-action="Index">
             <div class="nav-logo-icon">
-                <img src="~/logo2.png" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;" />
+                <img src="~/uniso2.png" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;" />
             </div>
             <div class="nav-logo-text">Marriage Certificate Portal</div>
         </a>
@@ -1107,7 +1114,7 @@
             <div class="wa-body">
                 <p><strong>Assalamu Alaikum! 👋</strong></p>
                 <p class="wa-main-text">
-                    Welcome to the <strong>Yaqshiid District Court</strong> digital portal.
+                    Welcome to the <strong>Uniso Court</strong> digital portal.
                     Do you need assistance with your marriage certificate application or tracking your request?
                     Our dedicated support team is online and ready to guide you through every step!
                 </p>
@@ -1250,6 +1257,7 @@
             }
         }
     </script>
+    <script src="~/lib/select2/js/select2.full.min.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

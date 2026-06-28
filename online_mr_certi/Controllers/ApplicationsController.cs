@@ -37,7 +37,8 @@ public class ApplicationsController : Controller
     {
         var userId = HttpContext.Session.GetInt32(SessionKeys.UserId)!.Value;
         var list = await _db.MarriageApplications.AsNoTracking()
-            .Include(a => a.Certificate)
+            .Include(a => a.Appointments)
+            .ThenInclude(ap => ap.TimeSlot)
             .Include(a => a.Payment)
             .ThenInclude(p => p!.Fee)
             .Where(a => a.UserId == userId)
@@ -103,15 +104,31 @@ public class ApplicationsController : Controller
             HusbandName = model.HusbandName.Trim(),
             HusbandDob = model.HusbandDob.Date,
             HusbandIdNumber = model.HusbandIdNumber.Trim(),
-            HusbandContactNumber = model.HusbandContactNumber.Trim(),
+            HusbandContactNumber = string.IsNullOrWhiteSpace(model.HusbandContactNumber) ? "—" : model.HusbandContactNumber.Trim(),
             HusbandAddress = model.HusbandAddress.Trim(),
+            HusbandMotherName = model.HusbandMotherName?.Trim(),
+            HusbandOccupation = model.HusbandOccupation?.Trim(),
+            HusbandMaritalStatus = model.HusbandMaritalStatus.ToLabel(),
+            HusbandReligion = model.HusbandReligion?.Trim(),
+            HusbandNationality = model.HusbandNationality?.Trim(),
+            HusbandResidenceStatus = model.HusbandResidenceStatus?.ToString(),
             WifeName = model.WifeName.Trim(),
             WifeDob = model.WifeDob.Date,
             WifeIdNumber = model.WifeIdNumber.Trim(),
-            WifeContactNumber = model.WifeContactNumber.Trim(),
+            WifeContactNumber = string.IsNullOrWhiteSpace(model.WifeContactNumber) ? "—" : model.WifeContactNumber.Trim(),
             WifeAddress = model.WifeAddress.Trim(),
+            WifeMotherName = model.WifeMotherName?.Trim(),
+            WifeOccupation = model.WifeOccupation?.Trim(),
+            WifeMaritalStatus = model.WifeMaritalStatus.ToLabel(),
+            WifeReligion = model.WifeReligion?.Trim(),
+            WifeNationality = model.WifeNationality?.Trim(),
+            WifeResidenceStatus = model.WifeResidenceStatus?.ToString(),
             MarriageDate = model.MarriageDate.Date,
             MarriageLocation = model.MarriageLocation.Trim(),
+            District = model.District?.Trim(),
+            SheikhName = model.SheikhName?.Trim(),
+            MarriageType = model.MeherType.ToLabel(),
+            Meher = model.Meher?.Trim(),
             Status = ApplicationStatus.PendingPayment,
             SubmissionDate = DateTime.UtcNow
         };
@@ -125,9 +142,10 @@ public class ApplicationsController : Controller
                 ApplicationId = app.Id,
                 SortOrder = 1,
                 FullName = model.Witness1.FullName.Trim(),
+                MotherName = model.Witness1.MotherName?.Trim(),
                 DateOfBirth = model.Witness1.DateOfBirth.Date,
                 IdNumber = model.Witness1.IdNumber.Trim(),
-                ContactNumber = model.Witness1.ContactNumber.Trim(),
+                ContactNumber = string.IsNullOrWhiteSpace(model.Witness1.ContactNumber) ? "—" : model.Witness1.ContactNumber.Trim(),
                 Address = model.Witness1.Address.Trim()
             },
             new MarriageWitness
@@ -135,9 +153,10 @@ public class ApplicationsController : Controller
                 ApplicationId = app.Id,
                 SortOrder = 2,
                 FullName = model.Witness2.FullName.Trim(),
+                MotherName = model.Witness2.MotherName?.Trim(),
                 DateOfBirth = model.Witness2.DateOfBirth.Date,
                 IdNumber = model.Witness2.IdNumber.Trim(),
-                ContactNumber = model.Witness2.ContactNumber.Trim(),
+                ContactNumber = string.IsNullOrWhiteSpace(model.Witness2.ContactNumber) ? "—" : model.Witness2.ContactNumber.Trim(),
                 Address = model.Witness2.Address.Trim()
             });
         await _db.SaveChangesAsync();
@@ -176,9 +195,7 @@ public class ApplicationsController : Controller
             (model.HusbandIdentityDocument!,  DocumentCategories.HusbandIdentityDocument,  nameof(model.HusbandIdentityDocument)),
             (model.WifeIdentityDocument!,      DocumentCategories.WifeIdentityDocument,      nameof(model.WifeIdentityDocument)),
             (model.Witness1IdentityDocument!,  DocumentCategories.Witness1IdentityDocument,  nameof(model.Witness1IdentityDocument)),
-            (model.Witness2IdentityDocument!,  DocumentCategories.Witness2IdentityDocument,  nameof(model.Witness2IdentityDocument)),
-            (model.HusbandPassportPhoto!,      DocumentCategories.HusbandPassportPhoto,      nameof(model.HusbandPassportPhoto)),
-            (model.WifePassportPhoto!,         DocumentCategories.WifePassportPhoto,         nameof(model.WifePassportPhoto))
+            (model.Witness2IdentityDocument!,  DocumentCategories.Witness2IdentityDocument,  nameof(model.Witness2IdentityDocument))
         };
 
         foreach (var (file, category, key) in labeledUploads)
@@ -206,7 +223,7 @@ public class ApplicationsController : Controller
         }
 
         TempData["Message"] = "Your application was submitted successfully. Complete payment to continue.";
-        return RedirectToAction(nameof(Details), new { id = app.Id });
+        return RedirectToAction(nameof(Checkout), new { id = app.Id });
     }
 
     public async Task<IActionResult> Details(int id)
@@ -216,11 +233,23 @@ public class ApplicationsController : Controller
             .Include(a => a.Documents)
             .Include(a => a.Witnesses)
             .Include(a => a.Certificate)
+            .Include(a => a.Appointments)
+            .ThenInclude(ap => ap.TimeSlot)
             .Include(a => a.Payment)
             .ThenInclude(p => p!.Fee)
             .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
         if (app is null)
             return NotFound();
+
+        if (AppointmentWorkflow.IsPaymentStepComplete(app.Payment)
+            && AppointmentWorkflow.NeedsAppointmentBooking(app)
+            && !AppointmentWorkflow.HasActiveAppointment(app.Appointment)
+            && app.Status == ApplicationStatus.PendingPayment)
+        {
+            app.Status = ApplicationStatus.AwaitingAppointment;
+            await _db.SaveChangesAsync();
+        }
+
         return View(app);
     }
 
@@ -244,10 +273,11 @@ public class ApplicationsController : Controller
         }
 
         if (pay.PaymentStatus == PaymentStatuses.Pending &&
-            !string.IsNullOrEmpty(pay.ReceiptImage))
+            ( !string.IsNullOrEmpty(pay.ReceiptImage)
+              || pay.TransactionNumber == PaymentMethods.PayAtOfficeMarker))
         {
-            TempData["Message"] = "Your payment details were submitted and are awaiting verification.";
-            return RedirectToAction(nameof(Details), new { id });
+            TempData["Message"] = "Your payment step is complete. Please book an appointment.";
+            return RedirectToAction("Book", "Appointments", new { applicationId = id });
         }
 
         var vm = new PaymentCheckoutViewModel
@@ -289,10 +319,11 @@ public class ApplicationsController : Controller
         }
 
         if (pay.PaymentStatus == PaymentStatuses.Pending &&
-            !string.IsNullOrEmpty(pay.ReceiptImage))
+            ( !string.IsNullOrEmpty(pay.ReceiptImage)
+              || pay.TransactionNumber == PaymentMethods.PayAtOfficeMarker))
         {
-            TempData["Message"] = "Your payment is already awaiting verification.";
-            return RedirectToAction(nameof(Details), new { id = model.ApplicationId });
+            TempData["Message"] = "Your payment step is complete. Please book an appointment.";
+            return RedirectToAction("Book", "Appointments", new { applicationId = model.ApplicationId });
         }
 
         if (!ModelState.IsValid)
@@ -340,28 +371,44 @@ public class ApplicationsController : Controller
         pay.PaymentStatus = PaymentStatuses.Pending;
         pay.PaymentDate = null;
 
+        app.Status = ApplicationStatus.AwaitingAppointment;
         await _db.SaveChangesAsync();
 
-        TempData["Message"] = "Payment details submitted. An administrator will verify your payment shortly.";
-        return RedirectToAction(nameof(Details), new { id = model.ApplicationId });
+        TempData["Message"] = "Payment details submitted. Please book your office appointment.";
+        return RedirectToAction("Book", "Appointments", new { applicationId = model.ApplicationId });
     }
 
-    public async Task<IActionResult> DownloadCertificate(int id)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PayAtOffice(int id)
     {
         var userId = HttpContext.Session.GetInt32(SessionKeys.UserId)!.Value;
         var app = await _db.MarriageApplications
-            .Include(a => a.Certificate)
+            .Include(a => a.Payment)
             .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
-        if (app is null || app.Status != ApplicationStatus.Approved || app.Certificate is null)
+        if (app?.Payment is null)
             return NotFound();
 
-        var physical = Path.Combine(_env.WebRootPath, app.Certificate.CertificateFile.Replace('/', Path.DirectorySeparatorChar));
-        if (!System.IO.File.Exists(physical))
-            return NotFound();
+        if (app.Payment.PaymentStatus == PaymentStatuses.Approved)
+        {
+            TempData["Message"] = "Payment is already verified.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
 
-        var downloadName = $"marriage-certificate-{id}.pdf";
-        return PhysicalFile(physical, "application/pdf", downloadName);
+        app.Payment.TransactionNumber = PaymentMethods.PayAtOfficeMarker;
+        app.Payment.SenderPhone = "—";
+        app.Payment.ReceiptImage = null;
+        app.Payment.PaymentStatus = PaymentStatuses.Pending;
+        app.Status = ApplicationStatus.AwaitingAppointment;
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Pay-at-office selected. Please book your appointment and bring payment to the office.";
+        return RedirectToAction("Book", "Appointments", new { applicationId = id });
     }
+
+    public IActionResult DownloadCertificate(int id) => NotFound();
+
+    public IActionResult PrintCertificate(int id) => NotFound();
 
     private async Task<bool> TrySaveApplicationDocumentAsync(
         int applicationId,
@@ -396,24 +443,5 @@ public class ApplicationsController : Controller
         });
         await _db.SaveChangesAsync();
         return true;
-    }
-
-    // Marka la riixo badhanka daabacaadda, URL-ku wuxuu noqonayaa: /MarriageApplications/PrintCertificate/5
-    
-    public async Task<IActionResult> PrintCertificate(int id)
-    {
-        // Waxaan database-ka ka soo akhrinaynaa guurka saxda ah ee la rabo in la daabaco
-        var application = await _db.MarriageApplications
-            .Include(x => x.Witnesses)  // Si markhaatiyada loo soo bandhigo
-            .Include(x => x.Documents)  // Si sawirada loola soo baxo
-            .FirstOrDefaultAsync(x => x.Id == id);
-
-        if (application == null)
-        {
-            return NotFound();
-        }
-
-        // Waxay si toos ah koodhka ugu hageysaa faylkii .cshtml ee aan talaabadii 1aad ku sameynay
-        return View("~/Views/Certificates/Preview.cshtml", application);
     }
 }

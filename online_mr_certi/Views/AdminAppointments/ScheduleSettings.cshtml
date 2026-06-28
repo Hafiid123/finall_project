@@ -1,0 +1,66 @@
+@model online_mr_certi.Models.ViewModels.AppointmentScheduleSettingsViewModel
+@{
+    ViewData["Title"] = "Appointment schedule";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <h1>Appointment schedule settings</h1>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        @if (TempData["SuccessMessage"] is string ok)
+        {
+            <div class="alert alert-success">@ok</div>
+        }
+        <form asp-action="ScheduleSettings" method="post">
+            @Html.AntiForgeryToken()
+            <div class="card card-primary card-outline mb-3">
+                <div class="card-header"><h3 class="card-title">Working days</h3></div>
+                <div class="card-body">
+                    @for (var i = 0; i < Model.WorkingDays.Count; i++)
+                    {
+                        <input type="hidden" asp-for="WorkingDays[i].DayOfWeek" />
+                        <input type="hidden" asp-for="WorkingDays[i].Label" />
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="WorkingDays[i].IsActive" />
+                            <label class="form-check-label" asp-for="WorkingDays[i].IsActive">@Model.WorkingDays[i].Label</label>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="card card-secondary card-outline mb-3">
+                <div class="card-header"><h3 class="card-title">Time slots</h3></div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Capacity</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.TimeSlots.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="hidden" asp-for="TimeSlots[i].Id" />
+                                        <input asp-for="TimeSlots[i].StartTime" class="form-control" type="time" />
+                                    </td>
+                                    <td><input asp-for="TimeSlots[i].EndTime" class="form-control" type="time" /></td>
+                                    <td><input asp-for="TimeSlots[i].Capacity" class="form-control" type="number" min="1" max="100" /></td>
+                                    <td class="align-middle"><input asp-for="TimeSlots[i].IsActive" type="checkbox" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save settings</button>
+            <a asp-action="Index" class="btn btn-default ml-2">View appointments</a>
+        </form>
+    </div>
+</section>

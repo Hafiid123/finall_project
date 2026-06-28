@@ -1,0 +1,67 @@
+@model online_mr_certi.Models.ViewModels.StaffVerificationListViewModel
+@{
+    ViewData["Title"] = "Staff verification";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<section class="content-header">
+    <div class="container-fluid">
+        <h1>Staff verification</h1>
+        <p class="text-muted mb-0">Office visit — verify documents and approve at the counter.</p>
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        @if (TempData["Error"] is string err)
+        {
+            <div class="alert alert-danger">@err</div>
+        }
+        <form method="get" class="form-inline mb-3">
+            <label class="mr-2">Date</label>
+            <input type="date" name="date" class="form-control mr-2" value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+            <button type="submit" class="btn btn-primary">Show</button>
+        </form>
+        <form method="get" class="form-inline mb-4">
+            <label class="mr-2">Reference #</label>
+            <input type="text" name="reference" class="form-control mr-2" placeholder="APT-2026-000001" />
+            <button type="submit" class="btn btn-secondary">Find application</button>
+        </form>
+        <div class="card">
+            <div class="card-header"><h3 class="card-title mb-0">Today's appointments</h3></div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Time</th>
+                            <th>Applicant</th>
+                            <th>Couple</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Appointments.Any())
+                        {
+                            <tr><td colspan="6" class="text-center text-muted py-4">No booked appointments.</td></tr>
+                        }
+                        @foreach (var row in Model.Appointments)
+                        {
+                            <tr>
+                                <td><code>@row.ReferenceNumber</code></td>
+                                <td>@row.TimeLabel</td>
+                                <td>@row.ApplicantName</td>
+                                <td>@row.HusbandName &amp; @row.WifeName</td>
+                                <td>@row.ApplicationStatus</td>
+                                <td>
+                                    <a asp-controller="Admin" asp-action="ApplicationDetails" asp-route-id="@row.ApplicationId" class="btn btn-sm btn-success">
+                                        Verify &amp; decide
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

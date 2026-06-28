@@ -26,7 +26,8 @@ public class DashboardController : Controller
             .ToListAsync();
 
         ViewBag.PendingPayment = apps.Count(a => a.Status == ApplicationStatus.PendingPayment);
-        ViewBag.Pending = apps.Count(a => a.Status == ApplicationStatus.Pending);
+        ViewBag.AwaitingAppointment = apps.Count(a => a.Status == ApplicationStatus.AwaitingAppointment);
+        ViewBag.AppointmentBooked = apps.Count(a => a.Status == ApplicationStatus.AppointmentBooked);
         ViewBag.Approved = apps.Count(a => a.Status == ApplicationStatus.Approved);
         ViewBag.Rejected = apps.Count(a => a.Status == ApplicationStatus.Rejected);
         return View();

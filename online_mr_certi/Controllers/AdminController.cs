@@ -549,108 +549,143 @@ public class AdminController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateApplication(MarriageApplicationCreateViewModel model)
+    public async Task<IActionResult> CreateApplication(AdminCreateApplicationViewModel model)
     {
         if (ModelState.IsValid)
         {
-            // 1. Map-ka u samee Model-ka rasmiga ah (MarriageApplication)
+            var fee = await _db.Fees.AsNoTracking()
+                .Where(f => f.IsActive)
+                .OrderBy(f => f.Id)
+                .FirstOrDefaultAsync();
+            if (fee is null)
+            {
+                ModelState.AddModelError(string.Empty, "Application fees are not configured. Please contact the administrator.");
+            }
+            else
+            {
             var application = new MarriageApplication
             {
-                UserId = model.UserId, // User-kii laga doortay Dropdown-ka sare
-
-
-                HusbandName = model.HusbandName,
-                HusbandDob = model.HusbandDob,
-                HusbandIdNumber = model.HusbandIdNumber,
-                HusbandContactNumber = model.HusbandContactNumber,
-                HusbandAddress = model.HusbandAddress,
-
-                WifeName = model.WifeName,
-                WifeDob = model.WifeDob,
-                WifeIdNumber = model.WifeIdNumber,
-                WifeContactNumber = model.WifeContactNumber,
-                WifeAddress = model.WifeAddress,
-
-                MarriageDate = model.MarriageDate,
-                MarriageLocation = model.MarriageLocation,
-
-                Status = ApplicationStatus.Approved, // Toos waa Approved maadaama uu Admin-ku xafiiska ka qorayo
-                SubmissionDate = DateTime.Now
+                UserId = model.UserId,
+                HusbandName = model.HusbandName.Trim(),
+                HusbandMotherName = model.HusbandMotherName?.Trim(),
+                HusbandDob = model.HusbandDob.Date,
+                HusbandIdNumber = model.HusbandIdNumber.Trim(),
+                HusbandContactNumber = string.IsNullOrWhiteSpace(model.HusbandContactNumber) ? "—" : model.HusbandContactNumber.Trim(),
+                HusbandAddress = model.HusbandAddress.Trim(),
+                HusbandOccupation = model.HusbandOccupation?.Trim(),
+                HusbandMaritalStatus = model.HusbandMaritalStatus.ToLabel(),
+                HusbandReligion = model.HusbandReligion?.Trim(),
+                WifeName = model.WifeName.Trim(),
+                WifeMotherName = model.WifeMotherName?.Trim(),
+                WifeDob = model.WifeDob.Date,
+                WifeIdNumber = model.WifeIdNumber.Trim(),
+                WifeContactNumber = string.IsNullOrWhiteSpace(model.WifeContactNumber) ? "—" : model.WifeContactNumber.Trim(),
+                WifeAddress = model.WifeAddress.Trim(),
+                WifeOccupation = model.WifeOccupation?.Trim(),
+                WifeMaritalStatus = model.WifeMaritalStatus.ToLabel(),
+                WifeReligion = model.WifeReligion?.Trim(),
+                MarriageDate = model.MarriageDate.Date,
+                MarriageLocation = model.MarriageLocation.Trim(),
+                District = model.District?.Trim(),
+                SheikhName = model.SheikhName?.Trim(),
+                MarriageType = model.MeherType.ToLabel(),
+                Meher = model.Meher?.Trim(),
+                Status = ApplicationStatus.Approved,
+                SubmissionDate = DateTime.UtcNow
             };
 
-            // 2. Badbaadi oo toos ugu xir Faylasha (Documents) miiska 'documents'
-            var documents = new List<Document>();
-
-            if (model.HusbandIdentityDocument != null)
-                documents.Add(new Document { Category = DocumentCategories.HusbandIdentityDocument, FilePath = await SaveFileAsync(model.HusbandIdentityDocument) });
-
-            if (model.HusbandPassportPhoto != null)
-                documents.Add(new Document { Category = DocumentCategories.HusbandPassportPhoto, FilePath = await SaveFileAsync(model.HusbandPassportPhoto) });
-
-            if (model.WifeIdentityDocument != null)
-                documents.Add(new Document { Category = DocumentCategories.WifeIdentityDocument, FilePath = await SaveFileAsync(model.WifeIdentityDocument) });
-
-            if (model.WifePassportPhoto != null)
-                documents.Add(new Document { Category = DocumentCategories.WifePassportPhoto, FilePath = await SaveFileAsync(model.WifePassportPhoto) });
-
-            if (model.Witness1IdentityDocument != null)
-                documents.Add(new Document { Category = DocumentCategories.Witness1IdentityDocument, FilePath = await SaveFileAsync(model.Witness1IdentityDocument) });
-
-            if (model.Witness2IdentityDocument != null)
-                documents.Add(new Document { Category = DocumentCategories.Witness2IdentityDocument, FilePath = await SaveFileAsync(model.Witness2IdentityDocument) });
-
-            // Haddii ay jiraan faylal dheeri ah (Optional Supporting Files)
-            if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
-            {
-                foreach (var file in model.UploadedFiles)
-                {
-                    documents.Add(new Document { Category = DocumentCategories.Supporting, FilePath = await SaveFileAsync(file) });
-                }
-            }
-
-            // Toos ugu dar application-ka ka hor intaanan db-ga ku shubin
-            application.Documents = documents;
-
-            _db.MarriageApplications.Add(application); // Waxaa loo beddelay _db
-            await _db.SaveChangesAsync(); // Waxay wada badbaadinaysaa Application-ka iyo Documents-ka
-
-            // 3. Kaydi Labada Markhaati (MarriageWitness)
-            var witness1 = new MarriageWitness
-            {
-                ApplicationId = application.Id,
-                SortOrder = 1,
-                FullName = model.Witness1.FullName,
-                DateOfBirth = model.Witness1.DateOfBirth,
-                IdNumber = model.Witness1.IdNumber,
-                ContactNumber = model.Witness1.ContactNumber,
-                Address = model.Witness1.Address
-            };
-
-            var witness2 = new MarriageWitness
-            {
-                ApplicationId = application.Id,
-                SortOrder = 2,
-                FullName = model.Witness2.FullName,
-                DateOfBirth = model.Witness2.DateOfBirth,
-                IdNumber = model.Witness2.IdNumber,
-                ContactNumber = model.Witness2.ContactNumber,
-                Address = model.Witness2.Address
-            };
-
-            _db.MarriageWitnesses.AddRange(witness1, witness2); // Waxaa loo beddelay _db
+            _db.MarriageApplications.Add(application);
             await _db.SaveChangesAsync();
 
-            // 4. TOOS U DHCellI SHAHADDADA (Halkan baa aad ugu muhiimsan!)
-            // Maadaama Status-ku uu yahay Approved, waa inaan u dhalinaa PDF-ka si loogu daabaco meesha
-            await EnsureCertificateAsync(application);
-            await _db.SaveChangesAsync(); // Badbaadi shahaadada miiska Certificates lagu daray
+            var documents = new List<Document>();
+            if (model.HusbandIdentityDocument is { Length: > 0 })
+            {
+                documents.Add(new Document
+                {
+                    ApplicationId = application.Id,
+                    Category = DocumentCategories.HusbandIdentityDocument,
+                    FilePath = await SaveFileAsync(model.HusbandIdentityDocument)
+                });
+            }
+            if (model.WifeIdentityDocument is { Length: > 0 })
+            {
+                documents.Add(new Document
+                {
+                    ApplicationId = application.Id,
+                    Category = DocumentCategories.WifeIdentityDocument,
+                    FilePath = await SaveFileAsync(model.WifeIdentityDocument)
+                });
+            }
+            if (model.Witness1IdentityDocument is { Length: > 0 })
+            {
+                documents.Add(new Document
+                {
+                    ApplicationId = application.Id,
+                    Category = DocumentCategories.Witness1IdentityDocument,
+                    FilePath = await SaveFileAsync(model.Witness1IdentityDocument)
+                });
+            }
+            if (model.Witness2IdentityDocument is { Length: > 0 })
+            {
+                documents.Add(new Document
+                {
+                    ApplicationId = application.Id,
+                    Category = DocumentCategories.Witness2IdentityDocument,
+                    FilePath = await SaveFileAsync(model.Witness2IdentityDocument)
+                });
+            }
+            if (documents.Count > 0)
+            {
+                _db.Documents.AddRange(documents);
+                await _db.SaveChangesAsync();
+            }
 
-            TempData["SuccessMessage"] = "Codsiga guurka, dukumentiyada, markhaatiyada iyo shahaadada si guul leh ayaa loo kaydiyey!";
+            _db.MarriageWitnesses.AddRange(
+                new MarriageWitness
+                {
+                    ApplicationId = application.Id,
+                    SortOrder = 1,
+                    FullName = model.Witness1.FullName.Trim(),
+                    MotherName = model.Witness1.MotherName?.Trim(),
+                    DateOfBirth = model.Witness1.DateOfBirth.Date,
+                    IdNumber = model.Witness1.IdNumber.Trim(),
+                    ContactNumber = string.IsNullOrWhiteSpace(model.Witness1.ContactNumber) ? "—" : model.Witness1.ContactNumber.Trim(),
+                    Address = model.Witness1.Address.Trim()
+                },
+                new MarriageWitness
+                {
+                    ApplicationId = application.Id,
+                    SortOrder = 2,
+                    FullName = model.Witness2.FullName.Trim(),
+                    MotherName = model.Witness2.MotherName?.Trim(),
+                    DateOfBirth = model.Witness2.DateOfBirth.Date,
+                    IdNumber = model.Witness2.IdNumber.Trim(),
+                    ContactNumber = string.IsNullOrWhiteSpace(model.Witness2.ContactNumber) ? "—" : model.Witness2.ContactNumber.Trim(),
+                    Address = model.Witness2.Address.Trim()
+                });
+
+            _db.Payments.Add(new Payment
+            {
+                ApplicationId = application.Id,
+                UserId = model.UserId,
+                FeeId = fee.Id,
+                Amount = fee.Amount,
+                PaymentDate = DateTime.UtcNow,
+                PaymentStatus = PaymentStatuses.Approved,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await _db.SaveChangesAsync();
+
+            await EnsureCertificateAsync(application);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Codsiga guurka, markhaatiyada iyo shahaadada si guul leh ayaa loo kaydiyey!";
             return RedirectToAction("Index");
+            }
         }
 
-        // Haddii ay wax khaldamaan, dib u soo rari liiska Users-ka
-        ViewBag.Users = _db.Users.Where(u => u.Role == AppRoles.User).Select(u => new { Id = u.Id, Name = u.Name }).ToList();
+        ViewBag.Users = _db.Users.Where(u => u.Role == AppRoles.User).Select(u => new { u.Id, u.Name, u.Email }).ToList();
         return View(model);
     }
 
@@ -815,6 +850,8 @@ public class AdminController : Controller
             .Include(a => a.Documents)
             .Include(a => a.Witnesses)
             .Include(a => a.Certificate)
+            .Include(a => a.Appointments)
+            .ThenInclude(ap => ap.TimeSlot)
             .Include(a => a.Payment)
             .ThenInclude(p => p!.Fee)
             .FirstOrDefaultAsync(a => a.Id == id);
@@ -1017,12 +1054,13 @@ public class AdminController : Controller
         if (user is not null)
             user.PaymentStatus = UserPaymentStatuses.Paid;
 
-        if (payment.Application.Status == ApplicationStatus.PendingPayment)
-            payment.Application.Status = ApplicationStatus.Pending;
+        if (payment.Application.Status == ApplicationStatus.PendingPayment
+            || payment.Application.Status == ApplicationStatus.Pending)
+            payment.Application.Status = ApplicationStatus.AwaitingAppointment;
 
         await _db.SaveChangesAsync();
 
-        TempData["Message"] = "Payment approved. The application can now be reviewed.";
+        TempData["Message"] = "Payment approved. Applicant can proceed with appointment booking if not already booked.";
         return RedirectToAction(nameof(PaymentDetails), new { id });
     }
 
@@ -1047,25 +1085,62 @@ public class AdminController : Controller
     [RequirePermission(AppPermissions.ApproveApplications)]
     public async Task<IActionResult> EditApplication(int id)
     {
-        var app = await _db.MarriageApplications.FirstOrDefaultAsync(a => a.Id == id);
+        var app = await _db.MarriageApplications
+            .Include(a => a.Witnesses)
+            .FirstOrDefaultAsync(a => a.Id == id);
         if (app is null)
             return NotFound();
+
+        var w1 = ResolveWitness(app.Witnesses, 1);
+        var w2 = ResolveWitness(app.Witnesses, 2);
 
         var vm = new AdminApplicationEditViewModel
         {
             Id = app.Id,
             HusbandName = app.HusbandName,
+            HusbandMotherName = app.HusbandMotherName,
             HusbandDob = app.HusbandDob,
             HusbandIdNumber = app.HusbandIdNumber,
-            HusbandContactNumber = app.HusbandContactNumber,
             HusbandAddress = app.HusbandAddress,
+            HusbandOccupation = app.HusbandOccupation,
+            HusbandMaritalStatus = MaritalStatusExtensions.FromLabel(app.HusbandMaritalStatus),
+            HusbandReligion = app.HusbandReligion,
+            HusbandContactNumber = app.HusbandContactNumber == "—" ? null : app.HusbandContactNumber,
             WifeName = app.WifeName,
+            WifeMotherName = app.WifeMotherName,
             WifeDob = app.WifeDob,
             WifeIdNumber = app.WifeIdNumber,
-            WifeContactNumber = app.WifeContactNumber,
             WifeAddress = app.WifeAddress,
+            WifeOccupation = app.WifeOccupation,
+            WifeMaritalStatus = MaritalStatusExtensions.FromLabel(app.WifeMaritalStatus),
+            WifeReligion = app.WifeReligion,
+            WifeContactNumber = app.WifeContactNumber == "—" ? null : app.WifeContactNumber,
             MarriageDate = app.MarriageDate,
             MarriageLocation = app.MarriageLocation,
+            District = app.District,
+            SheikhName = app.SheikhName,
+            MeherType = MeherTypeExtensions.FromLabel(app.MarriageType),
+            Meher = app.Meher,
+            Witness1Id = w1?.Id,
+            Witness1 = w1 is null ? new AdminWitnessFormModel() : new AdminWitnessFormModel
+            {
+                FullName = w1.FullName,
+                MotherName = w1.MotherName,
+                DateOfBirth = w1.DateOfBirth,
+                IdNumber = w1.IdNumber,
+                ContactNumber = w1.ContactNumber == "—" ? null : w1.ContactNumber,
+                Address = w1.Address
+            },
+            Witness2Id = w2?.Id,
+            Witness2 = w2 is null ? new AdminWitnessFormModel() : new AdminWitnessFormModel
+            {
+                FullName = w2.FullName,
+                MotherName = w2.MotherName,
+                DateOfBirth = w2.DateOfBirth,
+                IdNumber = w2.IdNumber,
+                ContactNumber = w2.ContactNumber == "—" ? null : w2.ContactNumber,
+                Address = w2.Address
+            },
             Status = app.Status,
             Remarks = app.Remarks
         };
@@ -1096,17 +1171,29 @@ public class AdminController : Controller
             return NotFound();
 
         app.HusbandName = model.HusbandName.Trim();
+        app.HusbandMotherName = model.HusbandMotherName?.Trim();
         app.HusbandDob = model.HusbandDob.Date;
         app.HusbandIdNumber = model.HusbandIdNumber.Trim();
-        app.HusbandContactNumber = model.HusbandContactNumber.Trim();
+        app.HusbandContactNumber = string.IsNullOrWhiteSpace(model.HusbandContactNumber) ? "—" : model.HusbandContactNumber.Trim();
         app.HusbandAddress = model.HusbandAddress.Trim();
+        app.HusbandOccupation = model.HusbandOccupation?.Trim();
+        app.HusbandMaritalStatus = model.HusbandMaritalStatus.ToLabel();
+        app.HusbandReligion = model.HusbandReligion?.Trim();
         app.WifeName = model.WifeName.Trim();
+        app.WifeMotherName = model.WifeMotherName?.Trim();
         app.WifeDob = model.WifeDob.Date;
         app.WifeIdNumber = model.WifeIdNumber.Trim();
-        app.WifeContactNumber = model.WifeContactNumber.Trim();
+        app.WifeContactNumber = string.IsNullOrWhiteSpace(model.WifeContactNumber) ? "—" : model.WifeContactNumber.Trim();
         app.WifeAddress = model.WifeAddress.Trim();
+        app.WifeOccupation = model.WifeOccupation?.Trim();
+        app.WifeMaritalStatus = model.WifeMaritalStatus.ToLabel();
+        app.WifeReligion = model.WifeReligion?.Trim();
         app.MarriageDate = model.MarriageDate.Date;
         app.MarriageLocation = model.MarriageLocation.Trim();
+        app.District = model.District?.Trim();
+        app.SheikhName = model.SheikhName?.Trim();
+        app.MarriageType = model.MeherType.ToLabel();
+        app.Meher = model.Meher?.Trim();
         app.Status = model.Status;
         app.Remarks = string.IsNullOrWhiteSpace(model.Remarks) ? null : model.Remarks.Trim();
         app.DecisionDate = model.Status == ApplicationStatus.Approved || model.Status == ApplicationStatus.Rejected
@@ -1124,6 +1211,9 @@ public class AdminController : Controller
                 return View(model);
             }
         }
+
+        await SaveWitnessEditAsync(model.Witness1Id, app.Id, 1, model.Witness1);
+        await SaveWitnessEditAsync(model.Witness2Id, app.Id, 2, model.Witness2);
 
         await _db.SaveChangesAsync();
 
@@ -1208,24 +1298,41 @@ public class AdminController : Controller
     {
         var app = await _db.MarriageApplications
             .Include(a => a.Certificate)
+            .Include(a => a.Appointments)
+            .Include(a => a.Payment)
             .FirstOrDefaultAsync(a => a.Id == id);
         if (app is null)
             return NotFound();
 
-        var paid = await _db.Payments.AsNoTracking()
-            .AnyAsync(p => p.ApplicationId == id && p.PaymentStatus == PaymentStatuses.Approved);
+        if (app.Status != ApplicationStatus.AppointmentBooked && app.Status != ApplicationStatus.Pending)
+        {
+            TempData["Error"] = "Application must have a booked appointment before office approval.";
+            return RedirectToAction(nameof(ApplicationDetails), new { id });
+        }
+
+        var paid = app.Payment is not null && app.Payment.PaymentStatus == PaymentStatuses.Approved;
         if (!paid)
         {
-            TempData["Error"] = "Cannot approve until the fee payment is verified (Approved).";
-            return RedirectToAction(nameof(ApplicationDetails), new { id });
+            if (app.Payment is null)
+            {
+                TempData["Error"] = "Missing payment record.";
+                return RedirectToAction(nameof(ApplicationDetails), new { id });
+            }
+
+            app.Payment.PaymentStatus = PaymentStatuses.Approved;
+            app.Payment.PaymentDate = DateTime.UtcNow;
         }
 
         app.Status = ApplicationStatus.Approved;
         app.Remarks = null;
         app.DecisionDate = DateTime.UtcNow;
+
+        if (app.Appointment is not null && app.Appointment.Status == AppointmentStatuses.Booked)
+            app.Appointment.Status = AppointmentStatuses.Completed;
+
         await EnsureCertificateAsync(app);
         await _db.SaveChangesAsync();
-        TempData["Message"] = "Application approved and certificate generated.";
+        TempData["Message"] = "Application approved and certificate generated for printing.";
         return RedirectToAction(nameof(ApplicationDetails), new { id });
     }
 
@@ -1244,6 +1351,27 @@ public class AdminController : Controller
         await _db.SaveChangesAsync();
         TempData["Message"] = "Application rejected.";
         return RedirectToAction(nameof(ApplicationDetails), new { id = model.Id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequirePermission(AppPermissions.VerifyApplications)]
+    public async Task<IActionResult> MarkReadyForRebooking(int id)
+    {
+        var app = await _db.MarriageApplications.FirstOrDefaultAsync(a => a.Id == id);
+        if (app is null)
+            return NotFound();
+
+        if (app.Status != ApplicationStatus.CorrectionRequired)
+        {
+            TempData["Error"] = "Application is not in correction required status.";
+            return RedirectToAction(nameof(ApplicationDetails), new { id });
+        }
+
+        app.Status = ApplicationStatus.AwaitingAppointment;
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Application marked ready for rebooking.";
+        return RedirectToAction(nameof(ApplicationDetails), new { id });
     }
 
     [HttpPost]
@@ -1364,6 +1492,68 @@ public class AdminController : Controller
         {
             ApplicationId = app.Id,
             CertificateFile = relative
+        });
+    }
+
+    private static MarriageWitness? ResolveWitness(IEnumerable<MarriageWitness> witnesses, byte slot)
+    {
+        var list = witnesses.OrderBy(w => w.SortOrder).ThenBy(w => w.Id).ToList();
+        var byOrder = list.FirstOrDefault(w => w.SortOrder == slot);
+        if (byOrder != null)
+            return byOrder;
+        if (slot == 1)
+            return list.FirstOrDefault();
+        if (slot == 2)
+        {
+            var first = list.FirstOrDefault();
+            return list.FirstOrDefault(w => first == null || w.Id != first.Id);
+        }
+        return null;
+    }
+
+    private async Task SaveWitnessEditAsync(int? witnessId, int applicationId, byte sortOrder, AdminWitnessFormModel model)
+    {
+        MarriageWitness? witness = null;
+        if (witnessId is int id)
+        {
+            witness = await _db.MarriageWitnesses
+                .FirstOrDefaultAsync(w => w.Id == id && w.ApplicationId == applicationId);
+        }
+
+        witness ??= await _db.MarriageWitnesses
+            .FirstOrDefaultAsync(w => w.ApplicationId == applicationId && w.SortOrder == sortOrder);
+
+        if (witness is not null)
+        {
+            if (string.IsNullOrWhiteSpace(model.FullName))
+            {
+                _db.MarriageWitnesses.Remove(witness);
+                return;
+            }
+
+            witness.SortOrder = sortOrder;
+            witness.FullName = model.FullName.Trim();
+            witness.MotherName = model.MotherName?.Trim();
+            witness.DateOfBirth = model.DateOfBirth.Date;
+            witness.IdNumber = model.IdNumber.Trim();
+            witness.ContactNumber = string.IsNullOrWhiteSpace(model.ContactNumber) ? "—" : model.ContactNumber.Trim();
+            witness.Address = model.Address.Trim();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(model.FullName))
+            return;
+
+        _db.MarriageWitnesses.Add(new MarriageWitness
+        {
+            ApplicationId = applicationId,
+            SortOrder = sortOrder,
+            FullName = model.FullName.Trim(),
+            MotherName = model.MotherName?.Trim(),
+            DateOfBirth = model.DateOfBirth.Date,
+            IdNumber = model.IdNumber.Trim(),
+            ContactNumber = string.IsNullOrWhiteSpace(model.ContactNumber) ? "—" : model.ContactNumber.Trim(),
+            Address = model.Address.Trim()
         });
     }
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -21,10 +21,6 @@
     <PackageReference Include="QuestPDF" Version="2024.10.3" />
     <PackageReference Include="SkiaSharp" Version="3.119.2" />
     <PackageReference Include="Svg.Skia" Version="4.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\tailwind.css\" />
   </ItemGroup>
 
 </Project>

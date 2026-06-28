@@ -395,12 +395,20 @@
             <div class="stat-trend">Awaiting payment confirmation</div>
         </div>
 
-        <!-- Pending Review -->
+        <!-- Awaiting Appointment -->
         <div class="stat-card c-review">
-            <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
-            <div class="stat-label">Pending Review</div>
-            <p class="stat-number">@ViewBag.Pending</p>
-            <div class="stat-trend">Under staff review</div>
+            <div class="stat-icon"><i class="fas fa-calendar-plus"></i></div>
+            <div class="stat-label">Awaiting Appointment</div>
+            <p class="stat-number">@ViewBag.AwaitingAppointment</p>
+            <div class="stat-trend">Book your office visit</div>
+        </div>
+
+        <!-- Appointment Booked -->
+        <div class="stat-card c-review">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-label">Appointment Booked</div>
+            <p class="stat-number">@ViewBag.AppointmentBooked</p>
+            <div class="stat-trend">Visit scheduled</div>
         </div>
 
         <!-- Approved -->
@@ -408,7 +416,7 @@
             <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
             <div class="stat-label">Approved</div>
             <p class="stat-number">@ViewBag.Approved</p>
-            <div class="stat-trend">Ready to download</div>
+            <div class="stat-trend">Approved at office</div>
         </div>
 
         <!-- Rejected -->

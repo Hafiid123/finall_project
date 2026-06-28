@@ -12,6 +12,8 @@ public static class AppPermissions
     public const string ManageRoles = "ManageRoles";
     public const string ManageFees = "ManageFees";
     public const string ManagePayments = "ManagePayments";
+    public const string ManageAppointments = "ManageAppointments";
+    public const string VerifyApplications = "VerifyApplications";
 
     public static readonly string[] All =
     [
@@ -24,7 +26,9 @@ public static class AppPermissions
         ManageUsers,
         ManageRoles,
         ManageFees,
-        ManagePayments
+        ManagePayments,
+        ManageAppointments,
+        VerifyApplications
     ];
 }
 

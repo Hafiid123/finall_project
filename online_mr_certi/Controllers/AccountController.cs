@@ -223,7 +223,7 @@ public class AccountController : Controller
             return Redirect(returnUrl);
 
         return user.Role == AppRoles.User
-            ? RedirectToAction("Index", "Dashboard")
+            ? RedirectToAction("Index", "Home")
             : RedirectToAction("Index", "Admin");
     }
 
@@ -241,7 +241,7 @@ public class AccountController : Controller
     {
         var role = HttpContext.Session.GetString(SessionKeys.Role);
         return role == AppRoles.User
-            ? RedirectToAction("Index", "Dashboard")
+            ? RedirectToAction("Index", "Home")
             : RedirectToAction("Index", "Admin");
     }
 }

@@ -340,38 +340,55 @@
                     <span asp-validation-for="HusbandName" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="HusbandMotherName" class="form-label"></label>
+                    <input asp-for="HusbandMotherName" class="form-control" placeholder="Mother name" />
+                    <span asp-validation-for="HusbandMotherName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
                     <label asp-for="HusbandDob" class="form-label"></label>
                     <input asp-for="HusbandDob" class="form-control" type="date" />
                     <span asp-validation-for="HusbandDob" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="HusbandIdNumber" class="form-label"></label>
-                    <input asp-for="HusbandIdNumber" class="form-control" placeholder="National ID / Passport No." />
+                    <input asp-for="HusbandIdNumber" class="form-control" placeholder="National ID number" />
                     <span asp-validation-for="HusbandIdNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
-                    <label asp-for="HusbandContactNumber" class="form-label"></label>
-                    <input asp-for="HusbandContactNumber" class="form-control" placeholder="+252 …" />
-                    <span asp-validation-for="HusbandContactNumber" class="text-danger small"></span>
+                    <label asp-for="HusbandOccupation" class="form-label"></label>
+                    <input asp-for="HusbandOccupation" class="form-control" placeholder="Occupation" />
+                    <span asp-validation-for="HusbandOccupation" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="HusbandAddress" class="form-label"></label>
-                    <textarea asp-for="HusbandAddress" class="form-control" rows="2" placeholder="District / street address"></textarea>
+                    <textarea asp-for="HusbandAddress" class="form-control" rows="2" placeholder="Address (Residence)"></textarea>
                     <span asp-validation-for="HusbandAddress" class="text-danger small"></span>
                 </div>
+                <div class="col-md-6">
+                    <label asp-for="HusbandMaritalStatus" class="form-label"></label>
+                    <select asp-for="HusbandMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                        <option value="">— Select —</option>
+                    </select>
+                    <span asp-validation-for="HusbandMaritalStatus" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="HusbandReligion" class="form-label"></label>
+                    <input asp-for="HusbandReligion" class="form-control" placeholder="Religion" />
+                    <span asp-validation-for="HusbandReligion" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="HusbandContactNumber" class="form-label"></label>
+                    <input asp-for="HusbandContactNumber" class="form-control" placeholder="Contact number" />
+                    <span asp-validation-for="HusbandContactNumber" class="text-danger small"></span>
+                </div>
                 <div class="col-12"><hr class="section-divider" /></div>
-                <div class="col-12"><p class="uploads-label">Groom — document uploads</p></div>
+                <div class="col-12"><p class="uploads-label">Groom — ID / Passport</p></div>
                 <div class="col-md-6">
                     <label asp-for="HusbandIdentityDocument" class="form-label"></label>
                     <input asp-for="HusbandIdentityDocument" class="form-control" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                     <span asp-validation-for="HusbandIdentityDocument" class="text-danger small"></span>
+                    <p class="form-text">PDF or clear scan. Max 10 MB.</p>
                 </div>
-                <div class="col-md-6">
-                    <label asp-for="HusbandPassportPhoto" class="form-label"></label>
-                    <input asp-for="HusbandPassportPhoto" class="form-control" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                    <span asp-validation-for="HusbandPassportPhoto" class="text-danger small"></span>
-                </div>
-                <div class="col-12"><p class="form-text">ID/passport: PDF or clear scan. Photo: passport-style. Max 10 MB each.</p></div>
             </div>
         </div>
 
@@ -387,38 +404,55 @@
                     <span asp-validation-for="WifeName" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="WifeMotherName" class="form-label"></label>
+                    <input asp-for="WifeMotherName" class="form-control" placeholder="Mother name" />
+                    <span asp-validation-for="WifeMotherName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
                     <label asp-for="WifeDob" class="form-label"></label>
                     <input asp-for="WifeDob" class="form-control" type="date" />
                     <span asp-validation-for="WifeDob" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="WifeIdNumber" class="form-label"></label>
-                    <input asp-for="WifeIdNumber" class="form-control" placeholder="National ID / Passport No." />
+                    <input asp-for="WifeIdNumber" class="form-control" placeholder="National ID number" />
                     <span asp-validation-for="WifeIdNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
-                    <label asp-for="WifeContactNumber" class="form-label"></label>
-                    <input asp-for="WifeContactNumber" class="form-control" placeholder="+252 …" />
-                    <span asp-validation-for="WifeContactNumber" class="text-danger small"></span>
+                    <label asp-for="WifeOccupation" class="form-label"></label>
+                    <input asp-for="WifeOccupation" class="form-control" placeholder="Occupation" />
+                    <span asp-validation-for="WifeOccupation" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="WifeAddress" class="form-label"></label>
-                    <textarea asp-for="WifeAddress" class="form-control" rows="2" placeholder="District / street address"></textarea>
+                    <textarea asp-for="WifeAddress" class="form-control" rows="2" placeholder="Address (Residence)"></textarea>
                     <span asp-validation-for="WifeAddress" class="text-danger small"></span>
                 </div>
+                <div class="col-md-6">
+                    <label asp-for="WifeMaritalStatus" class="form-label"></label>
+                    <select asp-for="WifeMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                        <option value="">— Select —</option>
+                    </select>
+                    <span asp-validation-for="WifeMaritalStatus" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="WifeReligion" class="form-label"></label>
+                    <input asp-for="WifeReligion" class="form-control" placeholder="Religion" />
+                    <span asp-validation-for="WifeReligion" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="WifeContactNumber" class="form-label"></label>
+                    <input asp-for="WifeContactNumber" class="form-control" placeholder="Contact number" />
+                    <span asp-validation-for="WifeContactNumber" class="text-danger small"></span>
+                </div>
                 <div class="col-12"><hr class="section-divider" /></div>
-                <div class="col-12"><p class="uploads-label">Bride — document uploads</p></div>
+                <div class="col-12"><p class="uploads-label">Bride — ID / Passport</p></div>
                 <div class="col-md-6">
                     <label asp-for="WifeIdentityDocument" class="form-label"></label>
                     <input asp-for="WifeIdentityDocument" class="form-control" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" />
                     <span asp-validation-for="WifeIdentityDocument" class="text-danger small"></span>
+                    <p class="form-text">PDF or clear scan. Max 10 MB.</p>
                 </div>
-                <div class="col-md-6">
-                    <label asp-for="WifePassportPhoto" class="form-label"></label>
-                    <input asp-for="WifePassportPhoto" class="form-control" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" />
-                    <span asp-validation-for="WifePassportPhoto" class="text-danger small"></span>
-                </div>
-                <div class="col-12"><p class="form-text">ID/passport: PDF or clear scan. Photo: passport-style. Max 10 MB each.</p></div>
             </div>
         </div>
 
@@ -435,8 +469,30 @@
                 </div>
                 <div class="col-md-6">
                     <label asp-for="MarriageLocation" class="form-label"></label>
-                    <input asp-for="MarriageLocation" class="form-control" placeholder="Venue / location" />
+                    <input asp-for="MarriageLocation" class="form-control" placeholder="Marriage location" />
                     <span asp-validation-for="MarriageLocation" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="District" class="form-label"></label>
+                    <input asp-for="District" class="form-control" placeholder="District" />
+                    <span asp-validation-for="District" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SheikhName" class="form-label"></label>
+                    <input asp-for="SheikhName" class="form-control" placeholder="Sheikh name (Officiant)" />
+                    <span asp-validation-for="SheikhName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="MeherType" class="form-label"></label>
+                    <select asp-for="MeherType" asp-items="Html.GetEnumSelectList<MeherType>()" class="form-select">
+                        <option value="">— Select —</option>
+                    </select>
+                    <span asp-validation-for="MeherType" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Meher" class="form-label"></label>
+                    <input asp-for="Meher" class="form-control" placeholder="e.g. 5000 USD or 100 gram gold" />
+                    <span asp-validation-for="Meher" class="text-danger small"></span>
                 </div>
             </div>
         </div>
@@ -455,23 +511,28 @@
                     <span asp-validation-for="Witness1.FullName" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="Witness1.MotherName" class="form-label"></label>
+                    <input asp-for="Witness1.MotherName" class="form-control" placeholder="Mother name" />
+                    <span asp-validation-for="Witness1.MotherName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
                     <label asp-for="Witness1.DateOfBirth" class="form-label"></label>
                     <input asp-for="Witness1.DateOfBirth" class="form-control" type="date" />
                     <span asp-validation-for="Witness1.DateOfBirth" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Witness1.IdNumber" class="form-label"></label>
-                    <input asp-for="Witness1.IdNumber" class="form-control" placeholder="ID / Passport No." />
+                    <input asp-for="Witness1.IdNumber" class="form-control" placeholder="National ID number" />
                     <span asp-validation-for="Witness1.IdNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Witness1.ContactNumber" class="form-label"></label>
-                    <input asp-for="Witness1.ContactNumber" class="form-control" placeholder="+252 …" />
+                    <input asp-for="Witness1.ContactNumber" class="form-control" placeholder="Contact number" />
                     <span asp-validation-for="Witness1.ContactNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="Witness1.Address" class="form-label"></label>
-                    <textarea asp-for="Witness1.Address" class="form-control" rows="2" placeholder="District / street"></textarea>
+                    <textarea asp-for="Witness1.Address" class="form-control" rows="2" placeholder="Address"></textarea>
                     <span asp-validation-for="Witness1.Address" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
@@ -491,23 +552,28 @@
                     <span asp-validation-for="Witness2.FullName" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="Witness2.MotherName" class="form-label"></label>
+                    <input asp-for="Witness2.MotherName" class="form-control" placeholder="Mother name" />
+                    <span asp-validation-for="Witness2.MotherName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
                     <label asp-for="Witness2.DateOfBirth" class="form-label"></label>
                     <input asp-for="Witness2.DateOfBirth" class="form-control" type="date" />
                     <span asp-validation-for="Witness2.DateOfBirth" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Witness2.IdNumber" class="form-label"></label>
-                    <input asp-for="Witness2.IdNumber" class="form-control" placeholder="ID / Passport No." />
+                    <input asp-for="Witness2.IdNumber" class="form-control" placeholder="National ID number" />
                     <span asp-validation-for="Witness2.IdNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Witness2.ContactNumber" class="form-label"></label>
-                    <input asp-for="Witness2.ContactNumber" class="form-control" placeholder="+252 …" />
+                    <input asp-for="Witness2.ContactNumber" class="form-control" placeholder="Contact number" />
                     <span asp-validation-for="Witness2.ContactNumber" class="text-danger small"></span>
                 </div>
                 <div class="col-12">
                     <label asp-for="Witness2.Address" class="form-label"></label>
-                    <textarea asp-for="Witness2.Address" class="form-control" rows="2" placeholder="District / street"></textarea>
+                    <textarea asp-for="Witness2.Address" class="form-control" rows="2" placeholder="Address"></textarea>
                     <span asp-validation-for="Witness2.Address" class="text-danger small"></span>
                 </div>
                 <div class="col-md-6">
@@ -608,40 +674,41 @@
         /* ── Field definitions per step (name attr → label text) ── */
         var stepFields = {
             1: [
-                { name: 'HusbandName',          label: 'Groom full name',     type: 'text' },
-                { name: 'HusbandDob',            label: 'Date of birth',       type: 'date' },
-                { name: 'HusbandIdNumber',       label: 'ID number',           type: 'text' },
-                { name: 'HusbandContactNumber',  label: 'Contact number',      type: 'text' },
-                { name: 'HusbandAddress',        label: 'Address',             type: 'text' },
-                { name: 'HusbandIdentityDocument', label: 'Identity document', type: 'file' },
-                { name: 'HusbandPassportPhoto',  label: 'Passport photo',      type: 'file' }
+                { name: 'HusbandName',             label: 'Groom full name',       type: 'text' },
+                { name: 'HusbandDob',              label: 'Date of birth',         type: 'date' },
+                { name: 'HusbandIdNumber',         label: 'National ID number',    type: 'text' },
+                { name: 'HusbandAddress',          label: 'Address',               type: 'text' },
+                { name: 'HusbandContactNumber',    label: 'Contact number',        type: 'text' },
+                { name: 'HusbandIdentityDocument', label: 'Groom ID document',     type: 'file' }
             ],
             2: [
-                { name: 'WifeName',              label: 'Bride full name',     type: 'text' },
-                { name: 'WifeDob',               label: 'Date of birth',       type: 'date' },
-                { name: 'WifeIdNumber',          label: 'ID number',           type: 'text' },
-                { name: 'WifeContactNumber',     label: 'Contact number',      type: 'text' },
-                { name: 'WifeAddress',           label: 'Address',             type: 'text' },
-                { name: 'WifeIdentityDocument',  label: 'Identity document',   type: 'file' },
-                { name: 'WifePassportPhoto',     label: 'Passport photo',      type: 'file' }
+                { name: 'WifeName',                label: 'Bride full name',       type: 'text' },
+                { name: 'WifeDob',                 label: 'Date of birth',         type: 'date' },
+                { name: 'WifeIdNumber',            label: 'National ID number',    type: 'text' },
+                { name: 'WifeAddress',             label: 'Address',               type: 'text' },
+                { name: 'WifeContactNumber',       label: 'Contact number',        type: 'text' },
+                { name: 'WifeIdentityDocument',    label: 'Bride ID document',     type: 'file' }
             ],
             3: [
-                { name: 'MarriageDate',          label: 'Marriage date',       type: 'date' },
-                { name: 'MarriageLocation',      label: 'Marriage location',   type: 'text' }
+                { name: 'MarriageDate',            label: 'Marriage date',         type: 'date' },
+                { name: 'MarriageLocation',        label: 'Marriage location',     type: 'text' },
+                { name: 'District',                label: 'District',              type: 'text' },
+                { name: 'SheikhName',              label: 'Sheikh name (Officiant)', type: 'text' },
+                { name: 'MeherType',               label: 'Meher type',            type: 'select' }
             ],
             4: [
-                { name: 'Witness1.FullName',         label: 'Witness 1 full name',   type: 'text' },
+                { name: 'Witness1.FullName',         label: 'Witness 1 full name',     type: 'text' },
                 { name: 'Witness1.DateOfBirth',      label: 'Witness 1 date of birth', type: 'date' },
-                { name: 'Witness1.IdNumber',         label: 'Witness 1 ID number',   type: 'text' },
-                { name: 'Witness1.ContactNumber',    label: 'Witness 1 contact',     type: 'text' },
-                { name: 'Witness1.Address',          label: 'Witness 1 address',     type: 'text' },
-                { name: 'Witness1IdentityDocument',  label: 'Witness 1 ID document', type: 'file' },
-                { name: 'Witness2.FullName',         label: 'Witness 2 full name',   type: 'text' },
+                { name: 'Witness1.IdNumber',         label: 'Witness 1 ID number',     type: 'text' },
+                { name: 'Witness1.ContactNumber',    label: 'Witness 1 contact number', type: 'text' },
+                { name: 'Witness1.Address',          label: 'Witness 1 address',       type: 'text' },
+                { name: 'Witness1IdentityDocument',  label: 'Witness 1 ID document',   type: 'file' },
+                { name: 'Witness2.FullName',         label: 'Witness 2 full name',     type: 'text' },
                 { name: 'Witness2.DateOfBirth',      label: 'Witness 2 date of birth', type: 'date' },
-                { name: 'Witness2.IdNumber',         label: 'Witness 2 ID number',   type: 'text' },
-                { name: 'Witness2.ContactNumber',    label: 'Witness 2 contact',     type: 'text' },
-                { name: 'Witness2.Address',          label: 'Witness 2 address',     type: 'text' },
-                { name: 'Witness2IdentityDocument',  label: 'Witness 2 ID document', type: 'file' }
+                { name: 'Witness2.IdNumber',         label: 'Witness 2 ID number',     type: 'text' },
+                { name: 'Witness2.ContactNumber',    label: 'Witness 2 contact number', type: 'text' },
+                { name: 'Witness2.Address',          label: 'Witness 2 address',       type: 'text' },
+                { name: 'Witness2IdentityDocument',  label: 'Witness 2 ID document',   type: 'file' }
             ],
             5: [],   /* uploads optional */
             6: []    /* declaration — handled separately */

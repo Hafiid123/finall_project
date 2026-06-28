@@ -1,5 +1,6 @@
 @model List<online_mr_certi.Models.MarriageApplication>
 @using online_mr_certi.Models
+@using online_mr_certi.Infrastructure
 @{
     ViewData["Title"] = "My applications";
 
@@ -424,7 +425,7 @@
 <!-- HEADER -->
 <div class="apps-header">
     <div class="apps-header-left">
-        <p>📋 Applications</p>
+        <p>Applications</p>
         <h2>My <span>Applications</span></h2>
     </div>
     @* Haddii application active jirto — qari button-ka *@
@@ -567,6 +568,24 @@ else
                                         <span class="dot"></span>Pending Payment
                                     </span>
                                 }
+                                else if (a.Status == ApplicationStatus.AwaitingAppointment)
+                                {
+                                    <span class="status-badge badge-pending">
+                                        <span class="dot"></span>Awaiting Appointment
+                                    </span>
+                                }
+                                else if (a.Status == ApplicationStatus.AppointmentBooked)
+                                {
+                                    <span class="status-badge badge-approved">
+                                        <span class="dot"></span>Appointment Booked
+                                    </span>
+                                }
+                                else if (a.Status == ApplicationStatus.CorrectionRequired)
+                                {
+                                    <span class="status-badge badge-rejected">
+                                        <span class="dot"></span>Correction Required
+                                    </span>
+                                }
                                 else if (a.Status == ApplicationStatus.Pending)
                                 {
                                     <span class="status-badge badge-pending">
@@ -594,6 +613,10 @@ else
                                        asp-action="Details" asp-route-id="@a.Id">
                                         <i class="fas fa-eye"></i> Details
                                     </a>
+                                    @if (a.Appointment != null)
+                                    {
+                                        <span class="d-block small text-muted mt-1"><code>@a.Appointment.ReferenceNumber</code></span>
+                                    }
                                     @if (a.Status == ApplicationStatus.PendingPayment && a.Payment != null && a.Payment.PaymentStatus != PaymentStatuses.Approved)
                                     {
                                         var waiting = a.Payment.PaymentStatus == PaymentStatuses.Pending && !string.IsNullOrEmpty(a.Payment.ReceiptImage);
@@ -612,11 +635,15 @@ else
                                             <i class="fas fa-credit-card"></i> Pay now
                                         </a>
                                     }
-                                    @if (a.Status == ApplicationStatus.Approved && a.Certificate != null)
+                                    @if (a.Status == ApplicationStatus.Approved)
                                     {
-                                        <a class="btn-action btn-action-cert"
-                                           asp-action="PrintCertificate" asp-route-id="@a.Id" target="_blank">
-                                            <i class="fas fa-print"></i> Print Certificate
+                                        @* <span class="text-muted small">Collect at office</span> *@
+                                    }
+                                    else if (AppointmentWorkflow.CanBookAppointment(a, a.Payment))
+                                    {
+                                        <a class="btn-action btn-action-pay"
+                                           asp-controller="Appointments" asp-action="Book" asp-route-applicationId="@a.Id">
+                                            <i class="fas fa-calendar-check"></i> Book appointment
                                         </a>
                                     }
                                 </div>

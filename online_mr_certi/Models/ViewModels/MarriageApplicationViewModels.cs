@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using online_mr_certi.Models;
 
 namespace online_mr_certi.Models.ViewModels;
 
@@ -9,17 +10,21 @@ public class WitnessFormModel
     [Display(Name = "Full name")]
     public string FullName { get; set; } = string.Empty;
 
+    [MaxLength(200)]
+    [Display(Name = "Mother name")]
+    public string? MotherName { get; set; }
+
     [Required, DataType(DataType.Date)]
     [Display(Name = "Date of birth")]
     public DateTime DateOfBirth { get; set; }
 
     [Required, MaxLength(100)]
-    [Display(Name = "National ID")]
+    [Display(Name = "National ID number")]
     public string IdNumber { get; set; } = string.Empty;
 
-    [Required, MaxLength(50)]
+    [MaxLength(50)]
     [Display(Name = "Contact number")]
-    public string ContactNumber { get; set; } = string.Empty;
+    public string? ContactNumber { get; set; }
 
     [Required, MaxLength(500)]
     [Display(Name = "Address")]
@@ -33,44 +38,88 @@ public class MarriageApplicationCreateViewModel : IValidatableObject
     public int UserId { get; set; }
 
     [Required, MaxLength(200)]
-    [Display(Name = "Husband full name")]
+    [Display(Name = "Full name")]
     public string HusbandName { get; set; } = string.Empty;
 
+    [MaxLength(200)]
+    [Display(Name = "Mother name")]
+    public string? HusbandMotherName { get; set; }
+
     [Required, DataType(DataType.Date)]
-    [Display(Name = "Husband date of birth")]
+    [Display(Name = "Date of birth")]
     public DateTime HusbandDob { get; set; }
 
     [Required, MaxLength(100)]
-    [Display(Name = "Husband National ID ")]
+    [Display(Name = "National ID number")]
     public string HusbandIdNumber { get; set; } = string.Empty;
 
-    [Required, MaxLength(50)]
-    [Display(Name = "Husband contact number")]
-    public string HusbandContactNumber { get; set; } = string.Empty;
-
     [Required, MaxLength(500)]
-    [Display(Name = "Husband address")]
+    [Display(Name = "Address (Residence)")]
     public string HusbandAddress { get; set; } = string.Empty;
 
+    [MaxLength(150)]
+    [Display(Name = "Occupation")]
+    public string? HusbandOccupation { get; set; }
+
+    [Display(Name = "Marital status")]
+    public MaritalStatus? HusbandMaritalStatus { get; set; }
+
+    [MaxLength(100)]
+    [Display(Name = "Religion")]
+    public string? HusbandReligion { get; set; }
+
+    [MaxLength(50)]
+    [Display(Name = "Contact number")]
+    public string? HusbandContactNumber { get; set; }
+
     [Required, MaxLength(200)]
-    [Display(Name = "Wife full name")]
+    [Display(Name = "Full name")]
     public string WifeName { get; set; } = string.Empty;
 
+    [MaxLength(200)]
+    [Display(Name = "Mother name")]
+    public string? WifeMotherName { get; set; }
+
     [Required, DataType(DataType.Date)]
-    [Display(Name = "Wife date of birth")]
+    [Display(Name = "Date of birth")]
     public DateTime WifeDob { get; set; }
 
     [Required, MaxLength(100)]
-    [Display(Name = "Wife National ID")]
+    [Display(Name = "National ID number")]
     public string WifeIdNumber { get; set; } = string.Empty;
 
-    [Required, MaxLength(50)]
-    [Display(Name = "Wife contact number")]
-    public string WifeContactNumber { get; set; } = string.Empty;
-
     [Required, MaxLength(500)]
-    [Display(Name = "Wife address")]
+    [Display(Name = "Address (Residence)")]
     public string WifeAddress { get; set; } = string.Empty;
+
+    [MaxLength(150)]
+    [Display(Name = "Occupation")]
+    public string? WifeOccupation { get; set; }
+
+    [Display(Name = "Marital status")]
+    public MaritalStatus? WifeMaritalStatus { get; set; }
+
+    [MaxLength(100)]
+    [Display(Name = "Religion")]
+    public string? WifeReligion { get; set; }
+
+    [MaxLength(50)]
+    [Display(Name = "Contact number")]
+    public string? WifeContactNumber { get; set; }
+
+    [MaxLength(100)]
+    [Display(Name = "Nationality")]
+    public string? HusbandNationality { get; set; }
+
+    [Display(Name = "Residence status")]
+    public ResidenceStatus? HusbandResidenceStatus { get; set; }
+
+    [MaxLength(100)]
+    [Display(Name = "Nationality")]
+    public string? WifeNationality { get; set; }
+
+    [Display(Name = "Residence status")]
+    public ResidenceStatus? WifeResidenceStatus { get; set; }
 
     [Required, DataType(DataType.Date)]
     [Display(Name = "Marriage date")]
@@ -79,6 +128,21 @@ public class MarriageApplicationCreateViewModel : IValidatableObject
     [Required, MaxLength(300)]
     [Display(Name = "Marriage location")]
     public string MarriageLocation { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    [Display(Name = "District")]
+    public string? District { get; set; }
+
+    [MaxLength(200)]
+    [Display(Name = "Sheikh name (Officiant)")]
+    public string? SheikhName { get; set; }
+
+    [MaxLength(500)]
+    [Display(Name = "Meher amount / description")]
+    public string? Meher { get; set; }
+
+    [Display(Name = "Meher type")]
+    public MeherType? MeherType { get; set; }
 
     [Display(Name = "Witness 1 (Markhaatiye 1)")]
     public WitnessFormModel Witness1 { get; set; } = new();
@@ -122,10 +186,6 @@ public class MarriageApplicationCreateViewModel : IValidatableObject
             yield return err;
         foreach (var err in ValidateRequiredUpload(Witness2IdentityDocument, nameof(Witness2IdentityDocument)))
             yield return err;
-        foreach (var err in ValidateRequiredUpload(HusbandPassportPhoto, nameof(HusbandPassportPhoto)))
-            yield return err;
-        foreach (var err in ValidateRequiredUpload(WifePassportPhoto, nameof(WifePassportPhoto)))
-            yield return err;
     }
 
     private static IEnumerable<ValidationResult> ValidateRequiredUpload(IFormFile? file, string memberName)
@@ -153,6 +213,149 @@ public class MarriageApplicationCreateViewModel : IValidatableObject
             }
         }
     }
+}
+
+public class AdminWitnessFormModel
+{
+    [Required, MaxLength(200)]
+    [Display(Name = "Full name")]
+    public string FullName { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    [Display(Name = "Mother name")]
+    public string? MotherName { get; set; }
+
+    [Required, DataType(DataType.Date)]
+    [Display(Name = "Date of birth")]
+    public DateTime DateOfBirth { get; set; }
+
+    [Required, MaxLength(100)]
+    [Display(Name = "National ID number")]
+    public string IdNumber { get; set; } = string.Empty;
+
+    [MaxLength(50)]
+    [Display(Name = "Contact number")]
+    public string? ContactNumber { get; set; }
+
+    [Required, MaxLength(500)]
+    [Display(Name = "Address")]
+    public string Address { get; set; } = string.Empty;
+}
+
+public class AdminCreateApplicationViewModel
+{
+    [Required(ErrorMessage = "Please select the applicant account.")]
+    [Display(Name = "Select Applicant")]
+    public int UserId { get; set; }
+
+    [Required, MaxLength(200)]
+    [Display(Name = "Full name")]
+    public string HusbandName { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    [Display(Name = "Mother name")]
+    public string? HusbandMotherName { get; set; }
+
+    [Required, DataType(DataType.Date)]
+    [Display(Name = "Date of birth")]
+    public DateTime HusbandDob { get; set; }
+
+    [Required, MaxLength(100)]
+    [Display(Name = "National ID number")]
+    public string HusbandIdNumber { get; set; } = string.Empty;
+
+    [Required, MaxLength(500)]
+    [Display(Name = "Address (Residence)")]
+    public string HusbandAddress { get; set; } = string.Empty;
+
+    [MaxLength(150)]
+    [Display(Name = "Occupation")]
+    public string? HusbandOccupation { get; set; }
+
+    [Display(Name = "Marital status")]
+    public MaritalStatus? HusbandMaritalStatus { get; set; }
+
+    [MaxLength(100)]
+    [Display(Name = "Religion")]
+    public string? HusbandReligion { get; set; }
+
+    [MaxLength(50)]
+    [Display(Name = "Contact number")]
+    public string? HusbandContactNumber { get; set; }
+
+    [Required, MaxLength(200)]
+    [Display(Name = "Full name")]
+    public string WifeName { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    [Display(Name = "Mother name")]
+    public string? WifeMotherName { get; set; }
+
+    [Required, DataType(DataType.Date)]
+    [Display(Name = "Date of birth")]
+    public DateTime WifeDob { get; set; }
+
+    [Required, MaxLength(100)]
+    [Display(Name = "National ID number")]
+    public string WifeIdNumber { get; set; } = string.Empty;
+
+    [Required, MaxLength(500)]
+    [Display(Name = "Address (Residence)")]
+    public string WifeAddress { get; set; } = string.Empty;
+
+    [MaxLength(150)]
+    [Display(Name = "Occupation")]
+    public string? WifeOccupation { get; set; }
+
+    [Display(Name = "Marital status")]
+    public MaritalStatus? WifeMaritalStatus { get; set; }
+
+    [MaxLength(100)]
+    [Display(Name = "Religion")]
+    public string? WifeReligion { get; set; }
+
+    [MaxLength(50)]
+    [Display(Name = "Contact number")]
+    public string? WifeContactNumber { get; set; }
+
+    [Required, DataType(DataType.Date)]
+    [Display(Name = "Marriage date")]
+    public DateTime MarriageDate { get; set; }
+
+    [Required, MaxLength(300)]
+    [Display(Name = "Marriage location")]
+    public string MarriageLocation { get; set; } = string.Empty;
+
+    [MaxLength(200)]
+    [Display(Name = "District")]
+    public string? District { get; set; }
+
+    [MaxLength(200)]
+    [Display(Name = "Sheikh name (Officiant)")]
+    public string? SheikhName { get; set; }
+
+    [Display(Name = "Meher type")]
+    public MeherType? MeherType { get; set; }
+
+    [MaxLength(500)]
+    [Display(Name = "Meher amount / description")]
+    public string? Meher { get; set; }
+
+    public AdminWitnessFormModel Witness1 { get; set; } = new();
+
+    public AdminWitnessFormModel Witness2 { get; set; } = new();
+
+    [Display(Name = "ID / Passport (scan or photo)")]
+    public IFormFile? HusbandIdentityDocument { get; set; }
+
+    [Display(Name = "ID / Passport (scan or photo)")]
+    public IFormFile? WifeIdentityDocument { get; set; }
+
+    [Display(Name = "ID / Passport (scan or photo)")]
+    public IFormFile? Witness1IdentityDocument { get; set; }
+
+    [Display(Name = "ID / Passport (scan or photo)")]
+    public IFormFile? Witness2IdentityDocument { get; set; }
 }
 
 public class AdminRejectViewModel

@@ -33,6 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(conn, serverVersion));
 
 builder.Services.AddScoped<ICertificatePdfService, CertificatePdfService>();
+builder.Services.AddScoped<IAppointmentBookingService, AppointmentBookingService>();
 
 var app = builder.Build();
 

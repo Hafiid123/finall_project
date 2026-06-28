@@ -15,9 +15,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] — Admin</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="~/css/fonts.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AdminLTE/plugins/fontawesome-free/css/all.min.css" />
-    <link rel="icon" type="image/jpeg" href="~/logo.jpg" />
+    <link rel="icon" type="image/jpeg" href="~/uniso2.png" />
     <link rel="stylesheet" href="~/AdminLTE/dist/css/adminlte.min.css" />
     <style>
         .notification-dropdown {
@@ -73,7 +73,7 @@
         @* ===== SIDEBAR ===== *@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a asp-controller="Admin" asp-action="Index" class="brand-link">
-                <img src="~/logo.jpg" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;" />
+                <img src="~/uniso2.png" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;" />
                 <span class="brand-text font-weight-light">Marriage System</span>
             </a>
             <div class="sidebar">
@@ -128,6 +128,28 @@
                                    class="nav-link @(paymentsMenuActive ? "active" : "")">
                                     <i class="nav-icon fas fa-money-check-alt"></i>
                                     <p>Payments</p>
+                                </a>
+                            </li>
+                        }
+
+                        @if (CanSee(AppPermissions.VerifyApplications))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="AdminAppointments" asp-action="Verification"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminAppointments" && ViewContext.RouteData.Values["action"]?.ToString() == "Verification" ? "active" : "")">
+                                    <i class="nav-icon fas fa-user-check"></i>
+                                    <p>Staff verification</p>
+                                </a>
+                            </li>
+                        }
+
+                        @if (CanSee(AppPermissions.ManageAppointments))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="AdminAppointments" asp-action="Index"
+                                   class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminAppointments" && ViewContext.RouteData.Values["action"]?.ToString() != "Verification" ? "active" : "")">
+                                    <i class="nav-icon fas fa-calendar-alt"></i>
+                                    <p>Appointments</p>
                                 </a>
                             </li>
                         }

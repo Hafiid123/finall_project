@@ -17,6 +17,9 @@ public class MarriageWitness
     [Required, MaxLength(200)]
     public string FullName { get; set; } = string.Empty;
 
+    [MaxLength(200)]
+    public string? MotherName { get; set; }
+
     public DateTime DateOfBirth { get; set; }
 
     [Required, MaxLength(100)]

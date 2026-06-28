@@ -1,22 +1,8 @@
-﻿@model online_mr_certi.Models.ViewModels.MarriageApplicationCreateViewModel
+﻿@model online_mr_certi.Models.ViewModels.AdminCreateApplicationViewModel
+@using online_mr_certi.Models
 @{
     ViewData["Title"] = "New Marriage Application";
 }
-
-@* <div class="row mb-3">
-    <div class="col-sm-6">
-        <h4 class="m-0">
-            <i class="fas fa-file-contract mr-2 text-primary"></i> New Marriage Application
-        </h4>
-    </div>
-    <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
-            <li class="breadcrumb-item"><a asp-action="Applications">Applications</a></li>
-            <li class="breadcrumb-item active">New</li>
-        </ol>
-    </div>
-</div> *@
 
 <form asp-action="CreateApplication" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
@@ -26,7 +12,6 @@
         <i class="icon fas fa-ban"></i> Please fix the errors below.
     </div>
 
-    
     <div class="card card-outline card-primary mb-3">
         <div class="card-header">
             <h3 class="card-title">
@@ -36,7 +21,7 @@
         <div class="card-body">
             <div class="form-group">
                 <label asp-for="UserId" class="font-weight-bold">
-                    Select Registered User <span class="text-danger">*</span>
+                    Select Registered Applicant <span class="text-danger">*</span>
                 </label>
                 <select asp-for="UserId" class="form-control" required>
                     <option value="">-- Select Applicant --</option>
@@ -53,10 +38,9 @@
         </div>
     </div>
 
-    
     <div class="card card-outline card-info mb-3">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-male mr-1"></i> Husband Details</h3>
+            <h3 class="card-title"><i class="fas fa-male mr-1"></i> Husband (Ninka)</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
@@ -74,6 +58,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label asp-for="HusbandMotherName"></label>
+                        <input asp-for="HusbandMotherName" class="form-control" placeholder="Mother name" />
+                        <span asp-validation-for="HusbandMotherName" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
                         <label asp-for="HusbandDob"></label>
                         <input asp-for="HusbandDob" class="form-control" type="date" />
                         <span asp-validation-for="HusbandDob" class="text-danger small"></span>
@@ -82,40 +73,53 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="HusbandIdNumber"></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                            </div>
-                            <input asp-for="HusbandIdNumber" class="form-control" placeholder="National ID" />
-                        </div>
+                        <input asp-for="HusbandIdNumber" class="form-control" placeholder="National ID number" />
                         <span asp-validation-for="HusbandIdNumber" class="text-danger small"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="HusbandContactNumber"></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                            </div>
-                            <input asp-for="HusbandContactNumber" class="form-control" placeholder="Phone number" />
-                        </div>
-                        <span asp-validation-for="HusbandContactNumber" class="text-danger small"></span>
+                        <label asp-for="HusbandOccupation"></label>
+                        <input asp-for="HusbandOccupation" class="form-control" placeholder="Occupation" />
+                        <span asp-validation-for="HusbandOccupation" class="text-danger small"></span>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="HusbandAddress"></label>
-                        <textarea asp-for="HusbandAddress" class="form-control" rows="2" placeholder="Full address"></textarea>
+                        <textarea asp-for="HusbandAddress" class="form-control" rows="2" placeholder="Address (Residence)"></textarea>
                         <span asp-validation-for="HusbandAddress" class="text-danger small"></span>
                     </div>
                 </div>
-            </div>
-            <hr />
-            <p class="text-muted mb-2"><i class="fas fa-paperclip mr-1"></i> Documents</p>
-            <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label asp-for="HusbandMaritalStatus"></label>
+                        <select asp-for="HusbandMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                            <option value="">— Select —</option>
+                        </select>
+                        <span asp-validation-for="HusbandMaritalStatus" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HusbandReligion"></label>
+                        <input asp-for="HusbandReligion" class="form-control" placeholder="Religion" />
+                        <span asp-validation-for="HusbandReligion" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="HusbandContactNumber"></label>
+                        <input asp-for="HusbandContactNumber" class="form-control" placeholder="Contact number" />
+                        <span asp-validation-for="HusbandContactNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <hr />
+                    <p class="text-muted mb-2"><i class="fas fa-paperclip mr-1"></i> Husband — document</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-0">
                         <label asp-for="HusbandIdentityDocument"></label>
                         <div class="custom-file">
                             <input asp-for="HusbandIdentityDocument" type="file" class="custom-file-input"
@@ -123,27 +127,16 @@
                             <label class="custom-file-label" for="hIdDoc">Choose file…</label>
                         </div>
                         <span asp-validation-for="HusbandIdentityDocument" class="text-danger small"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="HusbandPassportPhoto"></label>
-                        <div class="custom-file">
-                            <input asp-for="HusbandPassportPhoto" type="file" class="custom-file-input"
-                                   accept=".pdf,.jpg,.jpeg,.png,.webp" id="hPhoto" />
-                            <label class="custom-file-label" for="hPhoto">Choose file…</label>
-                        </div>
-                        <span asp-validation-for="HusbandPassportPhoto" class="text-danger small"></span>
+                        <p class="form-text mb-0">National ID or passport — PDF or image. Max 10 MB.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
     <div class="card card-outline card-warning mb-3">
         <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-female mr-1"></i> Wife Details</h3>
+            <h3 class="card-title"><i class="fas fa-female mr-1"></i> Wife (Xaaska)</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
@@ -161,6 +154,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label asp-for="WifeMotherName"></label>
+                        <input asp-for="WifeMotherName" class="form-control" placeholder="Mother name" />
+                        <span asp-validation-for="WifeMotherName" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
                         <label asp-for="WifeDob"></label>
                         <input asp-for="WifeDob" class="form-control" type="date" />
                         <span asp-validation-for="WifeDob" class="text-danger small"></span>
@@ -169,40 +169,53 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="WifeIdNumber"></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                            </div>
-                            <input asp-for="WifeIdNumber" class="form-control" placeholder="National ID" />
-                        </div>
+                        <input asp-for="WifeIdNumber" class="form-control" placeholder="National ID number" />
                         <span asp-validation-for="WifeIdNumber" class="text-danger small"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="WifeContactNumber"></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                            </div>
-                            <input asp-for="WifeContactNumber" class="form-control" placeholder="Phone number" />
-                        </div>
-                        <span asp-validation-for="WifeContactNumber" class="text-danger small"></span>
+                        <label asp-for="WifeOccupation"></label>
+                        <input asp-for="WifeOccupation" class="form-control" placeholder="Occupation" />
+                        <span asp-validation-for="WifeOccupation" class="text-danger small"></span>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="WifeAddress"></label>
-                        <textarea asp-for="WifeAddress" class="form-control" rows="2" placeholder="Full address"></textarea>
+                        <textarea asp-for="WifeAddress" class="form-control" rows="2" placeholder="Address (Residence)"></textarea>
                         <span asp-validation-for="WifeAddress" class="text-danger small"></span>
                     </div>
                 </div>
-            </div>
-            <hr />
-            <p class="text-muted mb-2"><i class="fas fa-paperclip mr-1"></i> Documents</p>
-            <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label asp-for="WifeMaritalStatus"></label>
+                        <select asp-for="WifeMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                            <option value="">— Select —</option>
+                        </select>
+                        <span asp-validation-for="WifeMaritalStatus" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WifeReligion"></label>
+                        <input asp-for="WifeReligion" class="form-control" placeholder="Religion" />
+                        <span asp-validation-for="WifeReligion" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="WifeContactNumber"></label>
+                        <input asp-for="WifeContactNumber" class="form-control" placeholder="Contact number" />
+                        <span asp-validation-for="WifeContactNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <hr />
+                    <p class="text-muted mb-2"><i class="fas fa-paperclip mr-1"></i> Wife — document</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-0">
                         <label asp-for="WifeIdentityDocument"></label>
                         <div class="custom-file">
                             <input asp-for="WifeIdentityDocument" type="file" class="custom-file-input"
@@ -210,24 +223,87 @@
                             <label class="custom-file-label" for="wIdDoc">Choose file…</label>
                         </div>
                         <span asp-validation-for="WifeIdentityDocument" class="text-danger small"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="WifePassportPhoto"></label>
-                        <div class="custom-file">
-                            <input asp-for="WifePassportPhoto" type="file" class="custom-file-input"
-                                   accept=".pdf,.jpg,.jpeg,.png,.webp" id="wPhoto" />
-                            <label class="custom-file-label" for="wPhoto">Choose file…</label>
-                        </div>
-                        <span asp-validation-for="WifePassportPhoto" class="text-danger small"></span>
+                        <p class="form-text mb-0">National ID or passport — PDF or image. Max 10 MB.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
+    <div class="card card-outline card-success mb-3">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-ring mr-1"></i> Marriage Information</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="MarriageDate"></label>
+                        <input asp-for="MarriageDate" class="form-control" type="date" />
+                        <span asp-validation-for="MarriageDate" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="MarriageLocation"></label>
+                        <input asp-for="MarriageLocation" class="form-control" placeholder="Marriage location" />
+                        <span asp-validation-for="MarriageLocation" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="District"></label>
+                        <input asp-for="District" class="form-control" placeholder="District" />
+                        <span asp-validation-for="District" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="SheikhName"></label>
+                        <input asp-for="SheikhName" class="form-control" placeholder="Sheikh name (Officiant)" />
+                        <span asp-validation-for="SheikhName" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-outline card-secondary mb-3">
+        <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-gift mr-1"></i> Meher (Mahr)</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-md-0">
+                        <label asp-for="MeherType"></label>
+                        <select asp-for="MeherType" asp-items="Html.GetEnumSelectList<MeherType>()" class="form-control">
+                            <option value="">— Select —</option>
+                        </select>
+                        <span asp-validation-for="MeherType" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-0">
+                        <label asp-for="Meher"></label>
+                        <input asp-for="Meher" class="form-control" placeholder="e.g. 5000 USD or 100 gram gold" />
+                        <span asp-validation-for="Meher" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="card card-outline card-secondary mb-3">
@@ -245,34 +321,33 @@
                         <input asp-for="Witness1.FullName" class="form-control" placeholder="Full name" />
                         <span asp-validation-for="Witness1.FullName" class="text-danger small"></span>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Witness1.DateOfBirth"></label>
-                                <input asp-for="Witness1.DateOfBirth" class="form-control" type="date" />
-                                <span asp-validation-for="Witness1.DateOfBirth" class="text-danger small"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Witness1.IdNumber"></label>
-                                <input asp-for="Witness1.IdNumber" class="form-control" placeholder="ID number" />
-                                <span asp-validation-for="Witness1.IdNumber" class="text-danger small"></span>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label asp-for="Witness1.MotherName"></label>
+                        <input asp-for="Witness1.MotherName" class="form-control" placeholder="Mother name" />
+                        <span asp-validation-for="Witness1.MotherName" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Witness1.DateOfBirth"></label>
+                        <input asp-for="Witness1.DateOfBirth" class="form-control" type="date" />
+                        <span asp-validation-for="Witness1.DateOfBirth" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Witness1.IdNumber"></label>
+                        <input asp-for="Witness1.IdNumber" class="form-control" placeholder="National ID number" />
+                        <span asp-validation-for="Witness1.IdNumber" class="text-danger small"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Witness1.ContactNumber"></label>
-                        <input asp-for="Witness1.ContactNumber" class="form-control" placeholder="Phone" />
+                        <input asp-for="Witness1.ContactNumber" class="form-control" placeholder="Contact number" />
                         <span asp-validation-for="Witness1.ContactNumber" class="text-danger small"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Witness1.Address"></label>
-                        <textarea asp-for="Witness1.Address" class="form-control" rows="2"></textarea>
+                        <textarea asp-for="Witness1.Address" class="form-control" rows="2" placeholder="Address"></textarea>
                         <span asp-validation-for="Witness1.Address" class="text-danger small"></span>
                     </div>
                     <hr />
-                    <div class="form-group">
+                    <div class="form-group mb-0">
                         <label asp-for="Witness1IdentityDocument"></label>
                         <div class="custom-file">
                             <input asp-for="Witness1IdentityDocument" type="file" class="custom-file-input"
@@ -280,6 +355,7 @@
                             <label class="custom-file-label" for="w1Doc">Choose file…</label>
                         </div>
                         <span asp-validation-for="Witness1IdentityDocument" class="text-danger small"></span>
+                        <p class="form-text mb-0">National ID or passport — PDF or image.</p>
                     </div>
                 </div>
             </div>
@@ -301,34 +377,33 @@
                         <input asp-for="Witness2.FullName" class="form-control" placeholder="Full name" />
                         <span asp-validation-for="Witness2.FullName" class="text-danger small"></span>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Witness2.DateOfBirth"></label>
-                                <input asp-for="Witness2.DateOfBirth" class="form-control" type="date" />
-                                <span asp-validation-for="Witness2.DateOfBirth" class="text-danger small"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Witness2.IdNumber"></label>
-                                <input asp-for="Witness2.IdNumber" class="form-control" placeholder="ID number" />
-                                <span asp-validation-for="Witness2.IdNumber" class="text-danger small"></span>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label asp-for="Witness2.MotherName"></label>
+                        <input asp-for="Witness2.MotherName" class="form-control" placeholder="Mother name" />
+                        <span asp-validation-for="Witness2.MotherName" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Witness2.DateOfBirth"></label>
+                        <input asp-for="Witness2.DateOfBirth" class="form-control" type="date" />
+                        <span asp-validation-for="Witness2.DateOfBirth" class="text-danger small"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Witness2.IdNumber"></label>
+                        <input asp-for="Witness2.IdNumber" class="form-control" placeholder="National ID number" />
+                        <span asp-validation-for="Witness2.IdNumber" class="text-danger small"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Witness2.ContactNumber"></label>
-                        <input asp-for="Witness2.ContactNumber" class="form-control" placeholder="Phone" />
+                        <input asp-for="Witness2.ContactNumber" class="form-control" placeholder="Contact number" />
                         <span asp-validation-for="Witness2.ContactNumber" class="text-danger small"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Witness2.Address"></label>
-                        <textarea asp-for="Witness2.Address" class="form-control" rows="2"></textarea>
+                        <textarea asp-for="Witness2.Address" class="form-control" rows="2" placeholder="Address"></textarea>
                         <span asp-validation-for="Witness2.Address" class="text-danger small"></span>
                     </div>
                     <hr />
-                    <div class="form-group">
+                    <div class="form-group mb-0">
                         <label asp-for="Witness2IdentityDocument"></label>
                         <div class="custom-file">
                             <input asp-for="Witness2IdentityDocument" type="file" class="custom-file-input"
@@ -336,67 +411,13 @@
                             <label class="custom-file-label" for="w2Doc">Choose file…</label>
                         </div>
                         <span asp-validation-for="Witness2IdentityDocument" class="text-danger small"></span>
+                        <p class="form-text mb-0">National ID or passport — PDF or image.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
-    <div class="card card-outline card-success mb-3">
-        <div class="card-header">
-            <h3 class="card-title"><i class="fas fa-ring mr-1"></i> Marriage Details</h3>
-            <div class="card-tools">
-                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                </button>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="MarriageDate"></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            </div>
-                            <input asp-for="MarriageDate" class="form-control" type="date" />
-                        </div>
-                        <span asp-validation-for="MarriageDate" class="text-danger small"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="MarriageLocation"></label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                            </div>
-                            <input asp-for="MarriageLocation" class="form-control" placeholder="City / District" />
-                        </div>
-                        <span asp-validation-for="MarriageLocation" class="text-danger small"></span>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="form-group">
-                        <label asp-for="UploadedFiles">
-                            Additional Supporting Documents
-                            <small class="text-muted">(PDF, JPG, PNG — optional)</small>
-                        </label>
-                        <div class="custom-file">
-                            <input asp-for="UploadedFiles" type="file" class="custom-file-input"
-                                   multiple accept=".pdf,.jpg,.jpeg,.png,.webp" id="suppDocs" />
-                            <label class="custom-file-label" for="suppDocs">Choose files…</label>
-                        </div>
-                        <span asp-validation-for="UploadedFiles" class="text-danger small"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
     <div class="card mb-4">
         <div class="card-body d-flex justify-content-between">
             <a asp-action="Applications" class="btn btn-secondary">
@@ -407,7 +428,6 @@
             </button>
         </div>
     </div>
-
 </form>
 
 @section Scripts {

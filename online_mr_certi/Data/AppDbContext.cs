@@ -18,6 +18,9 @@ public class AppDbContext : DbContext
     public DbSet<Fee> Fees => Set<Fee>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<AdminNotificationReadState> AdminNotificationReadStates => Set<AdminNotificationReadState>();
+    public DbSet<AppointmentWorkingDay> AppointmentWorkingDays => Set<AppointmentWorkingDay>();
+    public DbSet<AppointmentTimeSlot> AppointmentTimeSlots => Set<AppointmentTimeSlot>();
+    public DbSet<Appointment> Appointments => Set<Appointment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -112,5 +115,24 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(n => n.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Appointment>()
+            .HasOne(a => a.Application)
+            .WithMany(app => app.Appointments)
+            .HasForeignKey(a => a.ApplicationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Appointment>()
+            .HasIndex(a => a.ReferenceNumber)
+            .IsUnique();
+
+        modelBuilder.Entity<Appointment>()
+            .HasOne(a => a.TimeSlot)
+            .WithMany(s => s.Appointments)
+            .HasForeignKey(a => a.TimeSlotId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AppointmentTimeSlot>()
+            .HasIndex(s => new { s.StartTime, s.EndTime });
     }
 }
