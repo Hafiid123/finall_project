@@ -6,7 +6,7 @@
     bool CanSee(string perm) => userPerms.Contains(perm);
     var adminAction = ViewContext.RouteData.Values["action"]?.ToString();
     var feesMenuActive = adminAction is "FeesSettings" or "EditFee" or "CreateFee" or "DeleteFee";
-    var paymentsMenuActive = adminAction is "Payments" or "PaymentDetails";
+    var paymentsMenuActive = adminAction is "Payments" or "PaymentDetails" or "CertificatePayments";
     var rolesMenuActive = adminAction is "Roles" or "CreateRole" or "EditRole";
 }
 <!DOCTYPE html>
@@ -125,14 +125,21 @@
                         {
                             <li class="nav-item">
                                 <a asp-controller="Admin" asp-action="Payments"
-                                   class="nav-link @(paymentsMenuActive ? "active" : "")">
+                                   class="nav-link @(adminAction is "Payments" or "PaymentDetails" ? "active" : "")">
                                     <i class="nav-icon fas fa-money-check-alt"></i>
                                     <p>Payments</p>
                                 </a>
                             </li>
+                           @*  <li class="nav-item">
+                                <a asp-controller="Admin" asp-action="CertificatePayments"
+                                   class="nav-link @(adminAction == "CertificatePayments" ? "active" : "")">
+                                    <i class="nav-icon fas fa-file-invoice"></i>
+                                    <p>Certificate Fees</p>
+                                </a>
+                            </li> *@
                         }
 
-                        @if (CanSee(AppPermissions.VerifyApplications))
+                       @*  @if (CanSee(AppPermissions.VerifyApplications))
                         {
                             <li class="nav-item">
                                 <a asp-controller="AdminAppointments" asp-action="Verification"
@@ -141,7 +148,7 @@
                                     <p>Staff verification</p>
                                 </a>
                             </li>
-                        }
+                        } *@
 
                         @if (CanSee(AppPermissions.ManageAppointments))
                         {

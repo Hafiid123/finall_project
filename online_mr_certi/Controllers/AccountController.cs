@@ -45,7 +45,7 @@ public class AccountController : Controller
                 var mailMessage = new MailMessage
                 {
                     // Halkaan ku qor Email-kaaga rasmiga ah ee nidaamku ka dhex dirayo xogta
-                    From = new MailAddress("portal@marriage-registry.com", "Marriage Registry System"),
+                    From = new MailAddress("hoooyo1230@gmail.com", "Marriage Registry System"),
                     Subject = "Password Reset Request",
                     Body = $@"
                     <div style='font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px; max-width: 500px;'>
@@ -67,7 +67,7 @@ public class AccountController : Controller
                     string myGmail = "hoooyo1230@gmail.com";
 
                     // 2. 16-ka xaraf ee Google App Password (ka soo sameey Google Account):
-                    string myAppPassword = "qcej mtoi bbbl ogqv";
+                    string myAppPassword = "qcejmtoibbblogqv";
 
                     smtpClient.Credentials = new NetworkCredential(myGmail, myAppPassword);
                     smtpClient.EnableSsl = true;

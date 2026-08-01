@@ -129,7 +129,7 @@ public class ApplicationsController : Controller
             SheikhName = model.SheikhName?.Trim(),
             MarriageType = model.MeherType.ToLabel(),
             Meher = model.Meher?.Trim(),
-            Status = ApplicationStatus.PendingPayment,
+            Status = ApplicationStatus.Pending,
             SubmissionDate = DateTime.UtcNow
         };
 
@@ -162,13 +162,11 @@ public class ApplicationsController : Controller
         await _db.SaveChangesAsync();
 
         var fee = await _db.Fees.AsNoTracking()
-            .Where(f => f.IsActive)
-            .OrderBy(f => f.Id)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(f => f.ServiceName == "Appointment Fee" && f.IsActive);
         if (fee is null)
         {
             ModelState.AddModelError(string.Empty,
-                "Application fees are not configured. Please contact the administrator.");
+                "Appointment Fee is not configured. Please contact the administrator.");
             _db.MarriageApplications.Remove(app);
             await _db.SaveChangesAsync();
             return View(model);
@@ -180,6 +178,7 @@ public class ApplicationsController : Controller
             UserId = userId,
             FeeId = fee.Id,
             Amount = fee.Amount,
+            ApplicationFee = fee.Amount,
             PaymentStatus = PaymentStatuses.Pending,
             PaymentDate = null,
             ReceiptImage = null,
@@ -286,9 +285,10 @@ public class ApplicationsController : Controller
             FeeName = pay.Fee.ServiceName,
             Amount = pay.Amount,
             Currency = pay.Fee.Currency,
-            MobileMoneyNumber = _manualPayment.MobileMoneyNumber.Trim(),
+            MobileMoneyNumber = string.IsNullOrWhiteSpace(_manualPayment.MobileMoneyNumber) ? "" : _manualPayment.MobileMoneyNumber.Trim(),
             SenderPhone = pay.SenderPhone ?? string.Empty,
-            TransactionNumber = pay.TransactionNumber ?? string.Empty
+            TransactionNumber = pay.TransactionNumber ?? string.Empty,
+            IsOnlineAvailable = !string.IsNullOrWhiteSpace(_manualPayment.MobileMoneyNumber)
         };
         return View(vm);
     }
@@ -308,7 +308,8 @@ public class ApplicationsController : Controller
         model.FeeName = app.Payment.Fee.ServiceName;
         model.Amount = app.Payment.Amount;
         model.Currency = app.Payment.Fee.Currency;
-        model.MobileMoneyNumber = _manualPayment.MobileMoneyNumber.Trim();
+        model.MobileMoneyNumber = string.IsNullOrWhiteSpace(_manualPayment.MobileMoneyNumber) ? "" : _manualPayment.MobileMoneyNumber.Trim();
+        model.IsOnlineAvailable = !string.IsNullOrWhiteSpace(_manualPayment.MobileMoneyNumber);
 
         var pay = app.Payment;
 
@@ -329,47 +330,58 @@ public class ApplicationsController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var receipt = model.ReceiptImage;
-        if (receipt is null || receipt.Length == 0)
+        var paymentMethod = model.PaymentMethod;
+        if (paymentMethod != PaymentMethods.Online && paymentMethod != PaymentMethods.Office)
         {
-            ModelState.AddModelError(nameof(model.ReceiptImage), "Please upload a receipt image (JPG or PNG).");
+            ModelState.AddModelError(nameof(model.PaymentMethod), "Please select a valid payment method.");
             return View(model);
         }
 
-        var ext = Path.GetExtension(receipt.FileName).ToLowerInvariant();
-        if (!ReceiptImageExtensions.Contains(ext))
+        if (paymentMethod == PaymentMethods.Online)
         {
-            ModelState.AddModelError(nameof(model.ReceiptImage), "Allowed receipt types: JPG, JPEG, PNG.");
-            return View(model);
+            var receipt = model.ReceiptImage;
+            if (receipt is null || receipt.Length == 0)
+            {
+                ModelState.AddModelError(nameof(model.ReceiptImage), "Please upload a receipt image (JPG or PNG).");
+                return View(model);
+            }
+
+            var ext = Path.GetExtension(receipt.FileName).ToLowerInvariant();
+            if (!ReceiptImageExtensions.Contains(ext))
+            {
+                ModelState.AddModelError(nameof(model.ReceiptImage), "Allowed receipt types: JPG, JPEG, PNG.");
+                return View(model);
+            }
+
+            if (receipt.Length > MaxFileBytes)
+            {
+                ModelState.AddModelError(nameof(model.ReceiptImage), "Receipt must be 10 MB or smaller.");
+                return View(model);
+            }
+
+            var paymentsDir = Path.Combine(_env.WebRootPath, "uploads", "payments");
+            Directory.CreateDirectory(paymentsDir);
+
+            if (!string.IsNullOrEmpty(pay.ReceiptImage))
+            {
+                var oldPath = Path.Combine(_env.WebRootPath, pay.ReceiptImage.Replace('/', Path.DirectorySeparatorChar));
+                if (System.IO.File.Exists(oldPath))
+                    System.IO.File.Delete(oldPath);
+            }
+
+            var storedName = $"{app.Id}_{Guid.NewGuid():N}{ext}";
+            var relative = Path.Combine("uploads", "payments", storedName).Replace('\\', '/');
+            var physical = Path.Combine(_env.WebRootPath, relative.Replace('/', Path.DirectorySeparatorChar));
+            await using (var fs = System.IO.File.Create(physical))
+                await receipt.CopyToAsync(fs);
+
+            pay.SenderPhone = model.SenderPhone?.Trim();
+            pay.TransactionNumber = model.TransactionNumber?.Trim();
+            pay.ReceiptImage = relative;
+            pay.PaymentMethod = PaymentMethods.Online;
+            pay.PaymentStatus = PaymentStatuses.Pending;
+            pay.PaymentDate = null;
         }
-
-        if (receipt.Length > MaxFileBytes)
-        {
-            ModelState.AddModelError(nameof(model.ReceiptImage), "Receipt must be 10 MB or smaller.");
-            return View(model);
-        }
-
-        var paymentsDir = Path.Combine(_env.WebRootPath, "uploads", "payments");
-        Directory.CreateDirectory(paymentsDir);
-
-        if (!string.IsNullOrEmpty(pay.ReceiptImage))
-        {
-            var oldPath = Path.Combine(_env.WebRootPath, pay.ReceiptImage.Replace('/', Path.DirectorySeparatorChar));
-            if (System.IO.File.Exists(oldPath))
-                System.IO.File.Delete(oldPath);
-        }
-
-        var storedName = $"{app.Id}_{Guid.NewGuid():N}{ext}";
-        var relative = Path.Combine("uploads", "payments", storedName).Replace('\\', '/');
-        var physical = Path.Combine(_env.WebRootPath, relative.Replace('/', Path.DirectorySeparatorChar));
-        await using (var fs = System.IO.File.Create(physical))
-            await receipt.CopyToAsync(fs);
-
-        pay.SenderPhone = model.SenderPhone.Trim();
-        pay.TransactionNumber = model.TransactionNumber.Trim();
-        pay.ReceiptImage = relative;
-        pay.PaymentStatus = PaymentStatuses.Pending;
-        pay.PaymentDate = null;
 
         app.Status = ApplicationStatus.AwaitingAppointment;
         await _db.SaveChangesAsync();
@@ -398,6 +410,7 @@ public class ApplicationsController : Controller
         app.Payment.TransactionNumber = PaymentMethods.PayAtOfficeMarker;
         app.Payment.SenderPhone = "—";
         app.Payment.ReceiptImage = null;
+        app.Payment.PaymentMethod = PaymentMethods.Office;
         app.Payment.PaymentStatus = PaymentStatuses.Pending;
         app.Status = ApplicationStatus.AwaitingAppointment;
         await _db.SaveChangesAsync();
@@ -406,9 +419,98 @@ public class ApplicationsController : Controller
         return RedirectToAction("Book", "Appointments", new { applicationId = id });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BookAppointment(int id, DateTime? appointmentDate, string? appointmentTime)
+    {
+        var userId = HttpContext.Session.GetInt32(SessionKeys.UserId)!.Value;
+        var app = await _db.MarriageApplications.FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+        if (app is null)
+            return NotFound();
+
+        if (appointmentDate is null)
+        {
+            TempData["Error"] = "Please select an appointment date.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        if (string.IsNullOrWhiteSpace(appointmentTime))
+        {
+            TempData["Error"] = "Please enter an appointment time.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        app.AppointmentDate = appointmentDate.Value;
+        app.AppointmentTime = appointmentTime.Trim();
+        app.AppointmentStatus = AppointmentSimpleStatuses.Pending;
+        if (app.Status == ApplicationStatus.AwaitingAppointment)
+            app.Status = ApplicationStatus.AppointmentBooked;
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Your appointment has been booked. Please wait for admin confirmation.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
     public IActionResult DownloadCertificate(int id) => NotFound();
 
     public IActionResult PrintCertificate(int id) => NotFound();
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubmitCertificatePayment(int id, string? senderPhone, string? transactionNumber, IFormFile? receiptImage)
+    {
+        var userId = HttpContext.Session.GetInt32(SessionKeys.UserId)!.Value;
+        var app = await _db.MarriageApplications
+            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+        if (app is null)
+            return NotFound();
+
+        if (app.Status != ApplicationStatus.Approved)
+        {
+            TempData["Error"] = "Certificate fee payment is only available for approved applications.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        if (string.IsNullOrWhiteSpace(senderPhone))
+        {
+            TempData["Error"] = "Please enter the phone number used to send payment.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        if (string.IsNullOrWhiteSpace(transactionNumber))
+        {
+            TempData["Error"] = "Please enter the transaction number.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        string? receiptPath = null;
+        if (receiptImage is { Length: > 0 })
+        {
+            var ext = Path.GetExtension(receiptImage.FileName).ToLowerInvariant();
+            if (ext is not ".jpg" and not ".jpeg" and not ".png")
+            {
+                TempData["Error"] = "Receipt must be a JPG, JPEG, or PNG file.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "receipts");
+            Directory.CreateDirectory(uploadsFolder);
+            var fileName = $"{Guid.NewGuid():N}{ext}";
+            var physicalPath = Path.Combine(uploadsFolder, fileName);
+            await using (var fs = System.IO.File.Create(physicalPath))
+                await receiptImage.CopyToAsync(fs);
+            receiptPath = Path.Combine("uploads", "receipts", fileName).Replace('\\', '/');
+        }
+
+        app.CertificateFeeStatus = CertificateFeeStatuses.Pending;
+        app.CertificateFeeSenderPhone = senderPhone.Trim();
+        app.CertificateFeeTransactionNumber = transactionNumber.Trim();
+        app.CertificateFeeReceiptImage = receiptPath;
+
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Certificate fee payment submitted. An administrator will verify it.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
 
     private async Task<bool> TrySaveApplicationDocumentAsync(
         int applicationId,

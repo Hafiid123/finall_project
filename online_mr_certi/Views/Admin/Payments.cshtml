@@ -12,11 +12,11 @@
                 <option value="">All</option>
                 @if (st == PaymentStatuses.Pending)
                 {
-                    <option value="@PaymentStatuses.Pending" selected>Pending</option>
+                    <option value="@PaymentStatuses.Pending" selected>Unpaid</option>
                 }
                 else
                 {
-                    <option value="@PaymentStatuses.Pending">Pending</option>
+                    <option value="@PaymentStatuses.Pending">Unpaid</option>
                 }
                 @if (st == PaymentStatuses.Approved)
                 {
@@ -51,19 +51,29 @@
                     <th>Transaction #</th>
                     <th>Amount</th>
                     <th>Receipt</th>
-                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var p in Model)
                 {
+                    var isWalkin = p.Application.UserId is null;
+                    var totalAmount = p.ApplicationFee + (p.Application.CertificateFeeAmount ?? 0m);
                     <tr>
                         <td>@p.Id</td>
-                        <td>@p.Application.User.Name<br /><small class="text-muted">@p.Application.User.Email</small></td>
+                        <td>
+                            @if (isWalkin)
+                            {
+                                <span>Walk-in Applicant</span>
+                            }
+                            else
+                            {
+                                @p.Application.User?.Name
+                            }
+                        </td>
                         <td>@(string.IsNullOrEmpty(p.SenderPhone) ? "—" : p.SenderPhone)</td>
                         <td style="max-width:140px;word-break:break-all;">@(string.IsNullOrEmpty(p.TransactionNumber) ? "—" : p.TransactionNumber)</td>
-                        <td>@p.Amount.ToString("N2") @(p.Fee?.Currency ?? "")</td>
+                        <td>@totalAmount.ToString("N2") @(p.Fee?.Currency ?? "")</td>
                         <td>
                             @if (!string.IsNullOrEmpty(p.ReceiptImage))
                             {
@@ -77,18 +87,6 @@
                                     <a asp-action="PaymentDetails" asp-route-id="@p.Id">File</a>
                                 }
                             }
-                            else
-                            {
-                                <span class="text-muted">—</span>
-                            }
-                        </td>
-                        <td>
-                            @if (p.PaymentStatus == PaymentStatuses.Pending)
-                            { <span class="badge badge-warning">Pending</span> }
-                            else if (p.PaymentStatus == PaymentStatuses.Approved)
-                            { <span class="badge badge-success">Approved</span> }
-                            else
-                            { <span class="badge badge-danger">Rejected</span> }
                         </td>
                         <td>
                             <a asp-action="PaymentDetails" asp-route-id="@p.Id" class="btn btn-sm btn-warning me-1" title="View">

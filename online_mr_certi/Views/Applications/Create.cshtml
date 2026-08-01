@@ -366,8 +366,10 @@
                 </div>
                 <div class="col-md-6">
                     <label asp-for="HusbandMaritalStatus" class="form-label"></label>
-                    <select asp-for="HusbandMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                    <select asp-for="HusbandMaritalStatus" class="form-control">
                         <option value="">— Select —</option>
+                        <option value="Guursaday">Guursaday</option>
+                        <option value="MaGuursan">Ma guursan</option>
                     </select>
                     <span asp-validation-for="HusbandMaritalStatus" class="text-danger small"></span>
                 </div>
@@ -430,8 +432,10 @@
                 </div>
                 <div class="col-md-6">
                     <label asp-for="WifeMaritalStatus" class="form-label"></label>
-                    <select asp-for="WifeMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                    <select asp-for="WifeMaritalStatus" class="form-control">
                         <option value="">— Select —</option>
+                        <option value="Guursatay">Guursatay</option>
+                        <option value="MaGuursan">Ma guursan</option>
                     </select>
                     <span asp-validation-for="WifeMaritalStatus" class="text-danger small"></span>
                 </div>
@@ -606,7 +610,7 @@
                 <span class="step-badge">6 / 6</span> Declaration &amp; Submit
             </div>
             <div class="declaration-box">
-                I hereby declare that all information provided in this marriage application is true, accurate, and complete to the best of my knowledge. I understand that providing false information is a criminal offence under the laws of the Federal Republic of Somalia. I consent to the processing of the personal data provided for the purpose of registering this marriage at Yaqoshiid District.
+                I hereby declare that all information provided in this marriage application is true, accurate, and complete to the best of my knowledge. I understand that providing false information is a criminal offence under the laws of the Federal Republic of Somalia. I consent to the processing of the personal data provided for the purpose of registering this marriage at  Uniso Court.
             </div>
             <div class="declaration-check mb-1">
                 <input type="checkbox" id="declareCheck" />

@@ -61,7 +61,7 @@ public class AppDbContext : DbContext
             .HasOne(a => a.User)
             .WithMany(u => u.MarriageApplications)
             .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<Document>()
             .HasOne(d => d.Application)

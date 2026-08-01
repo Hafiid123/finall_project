@@ -28,39 +28,80 @@
         <div class="card">
             <div class="card-header"><h3 class="card-title mb-0">Today's appointments</h3></div>
             <div class="card-body p-0">
-                <table class="table table-striped mb-0">
-                    <thead>
-                        <tr>
-                            <th>Reference</th>
-                            <th>Time</th>
-                            <th>Applicant</th>
-                            <th>Couple</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Appointments.Any())
-                        {
-                            <tr><td colspan="6" class="text-center text-muted py-4">No booked appointments.</td></tr>
-                        }
-                        @foreach (var row in Model.Appointments)
-                        {
+                    <table class="table table-striped mb-0">
+                        <thead>
                             <tr>
-                                <td><code>@row.ReferenceNumber</code></td>
-                                <td>@row.TimeLabel</td>
-                                <td>@row.ApplicantName</td>
-                                <td>@row.HusbandName &amp; @row.WifeName</td>
-                                <td>@row.ApplicationStatus</td>
-                                <td>
-                                    <a asp-controller="Admin" asp-action="ApplicationDetails" asp-route-id="@row.ApplicationId" class="btn btn-sm btn-success">
-                                        Verify &amp; decide
-                                    </a>
-                                </td>
+                                <th>Reference</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Applicant</th>
+                                <th>Couple</th>
+                                <th>Appointment</th>
+                                <th>Status</th>
+                                <th></th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @if (!Model.Appointments.Any())
+                            {
+                                <tr><td colspan="8" class="text-center text-muted py-4">No booked appointments.</td></tr>
+                            }
+                            @foreach (var row in Model.Appointments)
+                            {
+                                <tr>
+                                    <td><code>@row.ReferenceNumber</code></td>
+                                    <td>@row.AppointmentDateLabel</td>
+                                    <td>@row.TimeLabel</td>
+                                    <td>@row.ApplicantName</td>
+                                    <td>@row.HusbandName &amp; @row.WifeName</td>
+                                    <td>
+                                        @if (row.AppointmentStatus == "Booked" || row.AppointmentStatus == "Pending")
+                                        { <span class="badge badge-warning">@row.AppointmentStatus</span> }
+                                        else if (row.AppointmentStatus == "Confirmed")
+                                        { <span class="badge badge-info">Confirmed</span> }
+                                        else if (row.AppointmentStatus == "Completed")
+                                        { <span class="badge badge-success">Completed</span> }
+                                        else if (row.AppointmentStatus == "Cancelled")
+                                        { <span class="badge badge-danger">Cancelled</span> }
+                                        else
+                                        { <span class="text-muted">@row.AppointmentStatus</span> }
+                                    </td>
+                                    <td>@row.ApplicationStatus</td>
+                                    <td class="text-nowrap">
+                                        <form asp-action="SetAppointment" method="post" class="form-inline mb-1 flex-nowrap">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@row.ApplicationId" />
+                                            <input type="date" name="appointmentDate" class="form-control form-control-sm mr-1" style="max-width:140px" value="@(row.AppointmentDateLabel != "" ? DateTime.TryParse(row.AppointmentDateLabel, out var d) ? d.ToString("yyyy-MM-dd") : "" : "")" />
+                                            <input type="text" name="appointmentTime" class="form-control form-control-sm mr-1" style="max-width:80px" placeholder="Time" />
+                                            <button type="submit" class="btn btn-sm btn-primary" title="Set / Update">Set</button>
+                                        </form>
+                                        <div class="btn-group btn-group-sm">
+                                            <form asp-action="ConfirmAppointment" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@row.ApplicationId" />
+                                                <button type="submit" class="btn btn-info" onclick="return confirm('Confirm this appointment?');">Confirm</button>
+                                            </form>
+                                            <form asp-action="CompleteAppointment" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@row.ApplicationId" />
+                                                <button type="submit" class="btn btn-success" onclick="return confirm('Mark appointment as completed?');">Complete</button>
+                                            </form>
+                                            <form asp-action="CancelAppointment" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@row.ApplicationId" />
+                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Cancel this appointment?');">Cancel</button>
+                                            </form>
+                                        </div>
+                                        <div class="mt-1">
+                                            <a asp-controller="Admin" asp-action="ApplicationDetails" asp-route-id="@row.ApplicationId" class="btn btn-sm btn-outline-success">
+                                                Open
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
             </div>
         </div>
     </div>

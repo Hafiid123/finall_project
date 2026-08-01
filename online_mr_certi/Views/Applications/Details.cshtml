@@ -588,6 +588,59 @@
     </div>
 }
 
+@if (Model.Status == ApplicationStatus.Approved && Model.CertificateFeeStatus != null)
+{
+    var certAccent = Model.CertificateFeeStatus == CertificateFeeStatuses.Paid ? "accent-success"
+        : Model.CertificateFeeStatus == CertificateFeeStatuses.Rejected ? "accent-danger" : "accent-warning";
+    <div class="det-card @certAccent">
+        <div class="det-card-header"><i class="fas fa-file-invoice me-2"></i>Certificate Fee</div>
+        <div class="det-card-body">
+            <p class="det-row"><strong>Amount:</strong> @(Model.CertificateFeeAmount?.ToString("N2") ?? "—")</p>
+            <p class="det-row"><strong>Status:</strong>
+                @if (Model.CertificateFeeStatus == CertificateFeeStatuses.Paid)
+                { <span class="badge badge-success">Paid</span> }
+                else if (Model.CertificateFeeStatus == CertificateFeeStatuses.Rejected)
+                { <span class="badge badge-danger">Rejected</span> }
+                else
+                { <span class="badge badge-warning">Pending</span> }
+            </p>
+            @if (!string.IsNullOrEmpty(Model.CertificateFeeSenderPhone))
+            {
+                <p class="det-row det-muted"><strong>Sender phone:</strong> @Model.CertificateFeeSenderPhone</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.CertificateFeeTransactionNumber))
+            {
+                <p class="det-row det-muted"><strong>Transaction #:</strong> @Model.CertificateFeeTransactionNumber</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.CertificateFeeReceiptImage))
+            {
+                <a target="_blank" href="~/@Model.CertificateFeeReceiptImage" class="det-link"><i class="fas fa-image me-1"></i>View receipt</a>
+            }
+            @if (Model.CertificateFeeStatus != CertificateFeeStatuses.Paid)
+            {
+                <hr class="det-divider" />
+                <form asp-action="SubmitCertificatePayment" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="form-group">
+                        <label>Phone number used to send payment</label>
+                        <input type="text" name="senderPhone" class="form-control" placeholder="E.g. 612345678" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction number</label>
+                        <input type="text" name="transactionNumber" class="form-control" placeholder="Reference / transaction ID" required />
+                    </div>
+                    <button type="submit" class="btn-pay-now"><i class="fas fa-credit-card"></i> Submit certificate fee payment</button>
+                </form>
+            }
+            @if (Model.CertificateFeeStatus == CertificateFeeStatuses.Paid)
+            {
+                <p class="det-row" style="color:#10b981;font-weight:600;font-size:13px;">Certificate fee paid. Certificate is ready.</p>
+            }
+        </div>
+    </div>
+}
+
 @if (Model.Appointment != null && Model.Appointment.Status == AppointmentStatuses.Booked)
 {
     <div class="det-card accent-primary">
@@ -600,17 +653,64 @@
         </div>
     </div>
 }
+else if (Model.AppointmentDate != null)
+{
+    <div class="det-card accent-primary">
+        <div class="det-card-header"><i class="fas fa-calendar-check me-2"></i>Appointment</div>
+        <div class="det-card-body">
+            <p class="det-row"><strong>Date:</strong> @Model.AppointmentDate.Value.ToString("dddd, dd MMM yyyy")</p>
+            <p class="det-row"><strong>Time:</strong> @(string.IsNullOrEmpty(Model.AppointmentTime) ? "—" : Model.AppointmentTime)</p>
+            <p class="det-row"><strong>Status:</strong>
+                @if (Model.AppointmentStatus == AppointmentSimpleStatuses.Pending)
+                { <span class="badge badge-warning">Pending</span> }
+                else if (Model.AppointmentStatus == AppointmentSimpleStatuses.Confirmed)
+                { <span class="badge badge-info">Confirmed</span> }
+                else if (Model.AppointmentStatus == AppointmentSimpleStatuses.Completed)
+                { <span class="badge badge-success">Completed</span> }
+                else if (Model.AppointmentStatus == AppointmentSimpleStatuses.Cancelled)
+                { <span class="badge badge-danger">Cancelled</span> }
+                else
+                { <span class="text-muted">@Model.AppointmentStatus</span> }
+            </p>
+        </div>
+    </div>
+}
 else if (canBook)
 {
-    <div class="det-alert det-alert-info">
-        <div class="det-alert-icon"><i class="fas fa-calendar-plus"></i></div>
+    <div class="det-card accent-info">
+        <div class="det-card-header"><i class="fas fa-calendar-plus me-2"></i>Book Appointment</div>
+        <div class="det-card-body">
+            <p class="text-muted">Choose a date and time for your office visit.</p>
+            <form asp-controller="Applications" asp-action="BookAppointment" method="post" class="form-inline mb-2">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="form-group mr-2 mb-1">
+                    <label class="sr-only" for="appDate">Date</label>
+                    <input type="date" name="appointmentDate" class="form-control" placeholder="Date" required />
+                </div>
+                <div class="form-group mr-2 mb-1">
+                    <label class="sr-only" for="appTime">Time</label>
+                    <input type="text" name="appointmentTime" class="form-control" placeholder="Time (e.g. 10:00)" required />
+                </div>
+                <button type="submit" class="btn btn-primary mb-1">Book appointment</button>
+            </form>
+            <hr />
+            <p class="mb-0 small">
+                <a asp-controller="Appointments" asp-action="Book" asp-route-applicationId="@Model.Id">
+                    Or book with a scheduled time slot
+                </a>
+            </p>
+        </div>
+    </div>
+}
+
+@if (Model.Status == ApplicationStatus.Approved && pay != null && pay.PaymentStatus != PaymentStatuses.Approved)
+{
+    <div class="det-alert det-alert-warning">
+        <div class="det-alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
         <div>
-            <strong>Next step</strong>
-            Book your office appointment to complete the process.
-            <br />
-            <a class="alert-link-btn" asp-controller="Appointments" asp-action="Book" asp-route-applicationId="@Model.Id">
-                <i class="fas fa-calendar-check"></i> Book appointment
-            </a>
+            <strong>Payment required</strong>
+            Your certificate cannot be generated or printed until your payment is approved. Please complete your payment.
         </div>
     </div>
 }
@@ -619,7 +719,17 @@ else if (canBook)
 {
     <div class="det-alert det-alert-success">
         <div class="det-alert-icon"><i class="fas fa-check-circle"></i></div>
-        <div>Your application was approved at the office. Collect your printed certificate from the court if you have not already received it.</div>
+        <div>
+            Your application was approved at the office.
+            @if (Model.CertificateFeeStatus != CertificateFeeStatuses.Paid)
+            {
+                <span>Please pay the certificate fee above to proceed with certificate processing.</span>
+            }
+            else
+            {
+                <span>Certificate fee paid. Collect your printed certificate from the court.</span>
+            }
+        </div>
     </div>
 }
 else if (Model.Status == ApplicationStatus.CorrectionRequired && !string.IsNullOrEmpty(Model.Remarks))

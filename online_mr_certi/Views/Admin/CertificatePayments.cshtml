@@ -1,0 +1,59 @@
+@model List<online_mr_certi.Models.MarriageApplication>
+@using online_mr_certi.Models
+@{
+    ViewData["Title"] = "Certificate Fee Payments";
+}
+<div class="card">
+    <div class="card-header"><h3 class="card-title">Certificate Fee Payments (@Model.Count)</h3></div>
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Applicant</th>
+                    <th>Amount</th>
+                    <th>Sender phone</th>
+                    <th>Transaction #</th>
+                    <th>Receipt</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="8" class="text-center text-muted py-4">No certificate fee payments.</td></tr>
+                }
+                @foreach (var app in Model)
+                {
+                    <tr>
+                        <td>@app.Id</td>
+                        <td>@(app.User?.Name ?? "Walk-in Applicant")</td>
+                        <td>@(app.CertificateFeeAmount?.ToString("N2") ?? "—")</td>
+                        <td>@(app.CertificateFeeSenderPhone ?? "—")</td>
+                        <td>@(app.CertificateFeeTransactionNumber ?? "—")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(app.CertificateFeeReceiptImage))
+                            {
+                                <a target="_blank" href="~/@app.CertificateFeeReceiptImage">View</a>
+                            }
+                            else
+                            { <span class="text-muted">—</span> }
+                        </td>
+                        <td>
+                            @if (app.CertificateFeeStatus == CertificateFeeStatuses.Pending)
+                            { <span class="badge badge-warning">Pending</span> }
+                            else if (app.CertificateFeeStatus == CertificateFeeStatuses.Paid)
+                            { <span class="badge badge-success">Paid</span> }
+                            else
+                            { <span class="badge badge-danger">Rejected</span> }
+                        </td>
+                        <td>
+                            <a asp-action="ApplicationDetails" asp-route-id="@app.Id" class="btn btn-sm btn-info">Open</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

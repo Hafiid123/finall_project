@@ -29,7 +29,7 @@ public class AdminDashboardViewModel
 
     // ===== Payment Chart =====
     public List<string> PaymentTrendLabels { get; set; } = new();
-    public List<int> PaymentTrendValues { get; set; } = new();
+    public List<decimal> PaymentTrendValues { get; set; } = new();
     public int TotalPaidPayments { get; set; }
     public int TotalPendingPayments { get; set; }
     public decimal TotalRevenue { get; set; }

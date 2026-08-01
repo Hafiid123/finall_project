@@ -8,8 +8,8 @@ public class MarriageApplication
 {
     public int Id { get; set; }
 
-    public int UserId { get; set; }
-    public User User { get; set; } = null!;
+    public int? UserId { get; set; }
+    public User? User { get; set; }
 
     [Required, MaxLength(200)]
     public string HusbandName { get; set; } = string.Empty;
@@ -63,6 +63,9 @@ public class MarriageApplication
     [MaxLength(200)]
     public string? HusbandMotherName { get; set; }
 
+    [NotMapped]
+    public string? MarriedBefore { get; set; }
+
     [MaxLength(100)]
     public string? HusbandNationality { get; set; }
 
@@ -107,6 +110,42 @@ public class MarriageApplication
 
     [MaxLength(500)]
     public string? Meher { get; set; }
+
+    public DateTime? AppointmentDate { get; set; }
+
+    [MaxLength(50)]
+    public string? AppointmentTime { get; set; }
+
+    [MaxLength(30)]
+    public string AppointmentStatus { get; set; } = AppointmentSimpleStatuses.Pending;
+
+    [MaxLength(30)]
+    public string? CertificateFeeStatus { get; set; }
+
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal? CertificateFeeAmount { get; set; }
+
+    public DateTime? CertificateFeePaidAt { get; set; }
+
+    [MaxLength(200)]
+    public string? CertificateFeeVerifiedBy { get; set; }
+
+    public DateTime? CertificateFeeVerifiedAt { get; set; }
+
+    [MaxLength(500)]
+    public string? CertificateFeeReceiptImage { get; set; }
+
+    [MaxLength(50)]
+    public string? CertificateFeeSenderPhone { get; set; }
+
+    [MaxLength(100)]
+    public string? CertificateFeeTransactionNumber { get; set; }
+
+    [MaxLength(500)]
+    public string? CertificateFeeRejectionReason { get; set; }
+
+    [MaxLength(30)]
+    public string? CertificateFeePaymentMethod { get; set; }
 
     public ICollection<Document> Documents { get; set; } = new List<Document>();
     public ICollection<MarriageWitness> Witnesses { get; set; } = new List<MarriageWitness>();

@@ -55,16 +55,16 @@ public class AdminController : Controller
                         p.PaymentDate != null &&
                         p.PaymentDate.Value >= startDate)
             .GroupBy(p => p.PaymentDate!.Value.Date)
-            .Select(g => new { Day = g.Key, Count = g.Count() })
+            .Select(g => new { Day = g.Key, Total = g.Sum(p => p.ApplicationFee + (p.Application.CertificateFeeAmount ?? 0m)) })
             .ToListAsync();
 
-        var paymentTrendMap = paymentTrendRaw.ToDictionary(x => x.Day, x => x.Count);
+        var paymentTrendMap = paymentTrendRaw.ToDictionary(x => x.Day, x => x.Total);
 
         var totalPaid = await _db.Payments.CountAsync(p => p.PaymentStatus == PaymentStatuses.Approved);
         var totalPendingPay = await _db.Payments.CountAsync(p => p.PaymentStatus == PaymentStatuses.Pending);
         var totalRevenue = await _db.Payments
             .Where(p => p.PaymentStatus == PaymentStatuses.Approved)
-            .SumAsync(p => (decimal?)p.Amount) ?? 0m;
+            .SumAsync(p => (decimal?)(p.ApplicationFee + (p.Application.CertificateFeeAmount ?? 0m))) ?? 0m;
 
         var decidedApps = await allApps
             .Where(a => a.DecisionDate != null &&
@@ -114,7 +114,7 @@ public class AdminController : Controller
             {
                 Id = a.Id,
                 ApplicantName = $"{a.HusbandName} & {a.WifeName}",
-                ApplicantEmail = a.User.Email,
+                ApplicantEmail = a.User != null ? a.User.Email : "",
                 Status = a.Status,
                 SubmissionDate = a.SubmissionDate
             })
@@ -126,7 +126,7 @@ public class AdminController : Controller
             .Take(5)
             .Select(a => new ActivityItemViewModel
             {
-                Message = $"User {a.User.Name} submitted application #{a.Id}",
+                Message = $"User {(a.User != null ? a.User.Name : "—")} submitted application #{a.Id}",
                 CreatedAt = a.SubmissionDate
             })
             .ToListAsync();
@@ -553,13 +553,14 @@ public class AdminController : Controller
     {
         if (ModelState.IsValid)
         {
-            var fee = await _db.Fees.AsNoTracking()
-                .Where(f => f.IsActive)
-                .OrderBy(f => f.Id)
-                .FirstOrDefaultAsync();
-            if (fee is null)
+            var apptFee = await _db.Fees.AsNoTracking()
+                .FirstOrDefaultAsync(f => f.ServiceName == "Appointment Fee" && f.IsActive);
+            var certFee = await _db.Fees.AsNoTracking()
+                .FirstOrDefaultAsync(f => f.ServiceName == "Certificate Fee" && f.IsActive);
+
+            if (apptFee is null)
             {
-                ModelState.AddModelError(string.Empty, "Application fees are not configured. Please contact the administrator.");
+                ModelState.AddModelError(string.Empty, "Appointment fee is not configured. Please contact the administrator.");
             }
             else
             {
@@ -664,14 +665,18 @@ public class AdminController : Controller
                     Address = model.Witness2.Address.Trim()
                 });
 
+            var certFeeAmount = certFee?.Amount ?? 0m;
+            application.CertificateFeeAmount = certFeeAmount;
+
             _db.Payments.Add(new Payment
             {
                 ApplicationId = application.Id,
                 UserId = model.UserId,
-                FeeId = fee.Id,
-                Amount = fee.Amount,
+                FeeId = apptFee.Id,
+                ApplicationFee = apptFee.Amount,
+                Amount = apptFee.Amount + certFeeAmount,
                 PaymentDate = DateTime.UtcNow,
-                PaymentStatus = PaymentStatuses.Approved,
+                PaymentStatus = PaymentStatuses.Pending,
                 CreatedAt = DateTime.UtcNow
             });
 
@@ -681,7 +686,8 @@ public class AdminController : Controller
             await _db.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Codsiga guurka, markhaatiyada iyo shahaadada si guul leh ayaa loo kaydiyey!";
-            return RedirectToAction("Index");
+            TempData["ShowPaymentModal"] = true;
+            return RedirectToAction(nameof(ApplicationDetails), new { id = application.Id });
             }
         }
 
@@ -690,6 +696,56 @@ public class AdminController : Controller
     }
 
 
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequirePermission(AppPermissions.ManagePayments)]
+    public async Task<IActionResult> SubmitCertificateFeePayment(int id, string senderPhone, string transactionNumber)
+    {
+        var app = await _db.MarriageApplications
+            .Include(a => a.Payment)
+            .FirstOrDefaultAsync(a => a.Id == id);
+        if (app is null)
+            return NotFound();
+
+        if (string.IsNullOrWhiteSpace(senderPhone))
+        {
+            TempData["Error"] = "Please enter the sender phone number.";
+            return RedirectToAction(nameof(ApplicationDetails), new { id });
+        }
+
+        if (string.IsNullOrWhiteSpace(transactionNumber))
+        {
+            TempData["Error"] = "Please enter the transaction number.";
+            return RedirectToAction(nameof(ApplicationDetails), new { id });
+        }
+
+        if (app.Payment != null)
+        {
+            app.Payment.PaymentMethod = PaymentMethods.Office;
+            app.Payment.SenderPhone = senderPhone.Trim();
+            app.Payment.TransactionNumber = transactionNumber.Trim();
+            app.Payment.PaymentDate = DateTime.UtcNow;
+        }
+
+        // Mark certificate fee as paid for portal applicants
+        if (app.UserId != null && app.CertificateFeeStatus != CertificateFeeStatuses.Paid)
+        {
+            if (app.CertificateFeeAmount == null)
+            {
+                var certFeeSetting = await _db.Fees.AsNoTracking()
+                    .FirstOrDefaultAsync(f => f.ServiceName == "Certificate Fee" && f.IsActive);
+                app.CertificateFeeAmount = certFeeSetting?.Amount ?? 0m;
+            }
+            app.CertificateFeeStatus = CertificateFeeStatuses.Paid;
+            app.CertificateFeePaidAt = DateTime.UtcNow;
+            app.CertificateFeePaymentMethod = PaymentMethods.Office;
+        }
+
+        await _db.SaveChangesAsync();
+        TempData["Message"] = "Payment recorded successfully.";
+        return RedirectToAction(nameof(ApplicationDetails), new { id });
+    }
 
     // GET: Admin/RegisterApplicant
     [HttpGet]
@@ -831,7 +887,7 @@ public class AdminController : Controller
             query = query.Where(a =>
                 a.HusbandName.Contains(term) ||
                 a.WifeName.Contains(term) ||
-                a.User.Email.Contains(term) ||
+                (a.User != null && a.User.Email.Contains(term)) ||
                 a.Id.ToString() == term ||
                 a.Witnesses.Any(w => w.FullName.Contains(term) || w.IdNumber.Contains(term)));
         }
@@ -857,6 +913,11 @@ public class AdminController : Controller
             .FirstOrDefaultAsync(a => a.Id == id);
         if (app is null)
             return NotFound();
+
+        var certFee = await _db.Fees.AsNoTracking()
+            .FirstOrDefaultAsync(f => f.ServiceName == "Certificate Fee" && f.IsActive);
+        ViewBag.CertificateFeeAmount = certFee?.Amount;
+
         return View(app);
     }
 
@@ -1310,6 +1371,20 @@ public class AdminController : Controller
             return RedirectToAction(nameof(ApplicationDetails), new { id });
         }
 
+        // Portal applicants: ensure certificate fee is paid before approval
+        if (app.UserId != null && app.CertificateFeeStatus != CertificateFeeStatuses.Paid)
+        {
+            if (app.CertificateFeeAmount == null)
+            {
+                var certFeeSetting = await _db.Fees.AsNoTracking()
+                    .FirstOrDefaultAsync(f => f.ServiceName == "Certificate Fee" && f.IsActive);
+                app.CertificateFeeAmount = certFeeSetting?.Amount ?? 0m;
+            }
+            TempData["ShowCertFeeModal"] = true;
+            TempData["Error"] = "Certificate fee must be paid before this application can be approved.";
+            return RedirectToAction(nameof(ApplicationDetails), new { id });
+        }
+
         var paid = app.Payment is not null && app.Payment.PaymentStatus == PaymentStatuses.Approved;
         if (!paid)
         {
@@ -1412,7 +1487,7 @@ public class AdminController : Controller
                 RefNo = $"MC-{a.Id:D3}",
                 Husband = a.HusbandName,
                 Wife = a.WifeName,
-                Amount = a.Payment != null ? a.Payment.Amount : 0,
+                Amount = a.Payment != null ? a.Payment.ApplicationFee + (a.CertificateFeeAmount ?? 0m) : 0,
                 Payment = a.Payment != null ? a.Payment.PaymentStatus : "Unpaid",
                 Status = a.Status,
                 Date = a.SubmissionDate
@@ -1452,7 +1527,7 @@ public class AdminController : Controller
                 RefNo = $"MC-{a.Id:D3}",
                 Husband = a.HusbandName,
                 Wife = a.WifeName,
-                Amount = a.Payment != null ? a.Payment.Amount : 0,
+                Amount = a.Payment != null ? a.Payment.ApplicationFee + (a.CertificateFeeAmount ?? 0m) : 0,
                 Payment = a.Payment != null ? a.Payment.PaymentStatus : "Unpaid",
                 Status = a.Status,
                 Date = a.SubmissionDate

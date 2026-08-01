@@ -338,7 +338,7 @@
                 }
             });
 
-            // Payment Trend Bar Chart (CUSUB)
+            // Payment Trend Bar Chart — total amount collected per day
             const paymentLabels = @Html.Raw(JsonSerializer.Serialize(Model.PaymentTrendLabels));
             const paymentValues = @Html.Raw(JsonSerializer.Serialize(Model.PaymentTrendValues));
 
@@ -348,7 +348,7 @@
                 data: {
                     labels: paymentLabels,
                     datasets: [{
-                        label: 'Approved Payments',
+                        label: 'Total Revenue',
                         data: paymentValues,
                         backgroundColor: 'rgba(40, 167, 69, 0.75)',
                         borderColor: '#28a745',
@@ -359,8 +359,26 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (ctx) {
+                                    return '$' + parseFloat(ctx.raw).toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }

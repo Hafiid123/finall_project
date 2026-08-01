@@ -1,33 +1,32 @@
 @model List<online_mr_certi.Models.ViewModels.StaffVerificationRow>
+@using online_mr_certi.Models
 @{
-    ViewData["Title"] = "Appointments";
+    ViewData["Title"] = "All Appointments";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    var selected = (DateOnly)ViewBag.SelectedDate;
 }
 <section class="content-header">
     <div class="container-fluid">
-        <h1>Appointments — @selected.ToString("dddd, dd MMM yyyy")</h1>
+        <h1>All Appointments</h1>
     </div>
 </section>
 <section class="content">
     <div class="container-fluid">
-        <form method="get" class="form-inline mb-3">
-            <label class="mr-2">Date</label>
-            <input type="date" name="date" class="form-control mr-2" value="@selected.ToString("yyyy-MM-dd")" />
-            <button type="submit" class="btn btn-primary">Show</button>
-            <a asp-action="ScheduleSettings" class="btn btn-default ml-2">Schedule settings</a>
-            <a asp-action="Verification" asp-route-date="@selected.ToString("yyyy-MM-dd")" class="btn btn-info ml-2">Staff verification</a>
-        </form>
+        <p class="mb-3">
+            <a asp-action="ScheduleSettings" class="btn btn-default">Schedule settings</a>
+            <a asp-action="Verification" class="btn btn-info">Staff verification</a>
+        </p>
         <div class="card">
             <div class="card-body p-0">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
+                            <th>Date</th>
                             <th>Reference</th>
                             <th>Time</th>
                             <th>Applicant</th>
                             <th>Husband / Wife</th>
-                            <th>Status</th>
+                            <th>Appt. Status</th>
+                            <th>App. Status</th>
                             <th>Payment</th>
                             <th></th>
                         </tr>
@@ -35,15 +34,28 @@
                     <tbody>
                         @if (!Model.Any())
                         {
-                            <tr><td colspan="7" class="text-center text-muted py-4">No appointments for this date.</td></tr>
+                            <tr><td colspan="9" class="text-center text-muted py-4">No appointments found.</td></tr>
                         }
                         @foreach (var row in Model)
                         {
                             <tr>
+                                <td>@row.AppointmentDateLabel</td>
                                 <td><code>@row.ReferenceNumber</code></td>
                                 <td>@row.TimeLabel</td>
                                 <td>@row.ApplicantName</td>
                                 <td>@row.HusbandName / @row.WifeName</td>
+                                <td>
+                                    @if (row.AppointmentStatus == AppointmentStatuses.Booked)
+                                    { <span class="badge badge-warning">Booked</span> }
+                                    else if (row.AppointmentStatus == AppointmentStatuses.Confirmed)
+                                    { <span class="badge badge-info">Confirmed</span> }
+                                    else if (row.AppointmentStatus == AppointmentStatuses.Completed)
+                                    { <span class="badge badge-success">Completed</span> }
+                                    else if (row.AppointmentStatus == AppointmentStatuses.Cancelled)
+                                    { <span class="badge badge-danger">Cancelled</span> }
+                                    else
+                                    { <span class="text-muted">@row.AppointmentStatus</span> }
+                                </td>
                                 <td>@row.ApplicationStatus</td>
                                 <td>@row.PaymentStatus</td>
                                 <td>

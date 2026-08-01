@@ -37,4 +37,7 @@ public static class AppointmentWorkflow
 
     public static bool HasActiveAppointment(Appointment? appointment)
         => appointment is not null && appointment.Status == AppointmentStatuses.Booked;
+
+    public static bool IsPaymentApproved(Payment? payment)
+        => payment is not null && payment.PaymentStatus == PaymentStatuses.Approved;
 }

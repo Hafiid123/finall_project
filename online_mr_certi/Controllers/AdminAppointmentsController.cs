@@ -114,34 +114,31 @@ public class AdminAppointmentsController : Controller
     }
 
     [RequirePermission(AppPermissions.ManageAppointments)]
-    public async Task<IActionResult> Index(DateOnly? date)
+    public async Task<IActionResult> Index()
     {
-        var selected = date ?? DateOnly.FromDateTime(DateTime.Today);
-        var dateStart = selected.ToDateTime(TimeOnly.MinValue);
-
         var list = await _db.Appointments.AsNoTracking()
             .Include(a => a.TimeSlot)
             .Include(a => a.Application)
             .ThenInclude(app => app.User)
             .Include(a => a.Application)
             .ThenInclude(app => app.Payment)
-            .Where(a => a.AppointmentDate == dateStart && a.Status == AppointmentStatuses.Booked)
-            .OrderBy(a => a.TimeSlot.StartTime)
-            .ThenBy(a => a.ReferenceNumber)
+            .OrderByDescending(a => a.AppointmentDate)
+            .ThenBy(a => a.TimeSlot.StartTime)
             .Select(a => new StaffVerificationRow
             {
                 ApplicationId = a.ApplicationId,
                 ReferenceNumber = a.ReferenceNumber,
-                ApplicantName = a.Application.User.Name,
+                ApplicantName = a.Application.User != null ? a.Application.User.Name : "—",
                 HusbandName = a.Application.HusbandName,
                 WifeName = a.Application.WifeName,
                 TimeLabel = a.TimeSlot.StartTime.ToString("HH:mm") + " – " + a.TimeSlot.EndTime.ToString("HH:mm"),
+                AppointmentDateLabel = a.AppointmentDate.ToString("dd MMM yyyy"),
+                AppointmentStatus = a.Status,
                 ApplicationStatus = a.Application.Status,
                 PaymentStatus = a.Application.Payment != null ? a.Application.Payment.PaymentStatus : "—"
             })
             .ToListAsync();
 
-        ViewBag.SelectedDate = selected;
         return View(list);
     }
 
@@ -160,7 +157,7 @@ public class AdminAppointmentsController : Controller
         var selected = date ?? DateOnly.FromDateTime(DateTime.Today);
         var dateStart = selected.ToDateTime(TimeOnly.MinValue);
 
-        var rows = await _db.Appointments.AsNoTracking()
+        var timeSlotRows = await _db.Appointments.AsNoTracking()
             .Include(a => a.TimeSlot)
             .Include(a => a.Application)
             .ThenInclude(app => app.User)
@@ -171,14 +168,41 @@ public class AdminAppointmentsController : Controller
             {
                 ApplicationId = a.ApplicationId,
                 ReferenceNumber = a.ReferenceNumber,
-                ApplicantName = a.Application.User.Name,
+                ApplicantName = a.Application.User != null ? a.Application.User.Name : "—",
                 HusbandName = a.Application.HusbandName,
                 WifeName = a.Application.WifeName,
                 TimeLabel = a.TimeSlot.StartTime.ToString("HH:mm") + " – " + a.TimeSlot.EndTime.ToString("HH:mm"),
+                AppointmentDateLabel = a.AppointmentDate.ToString("dddd, dd MMM yyyy"),
+                AppointmentStatus = a.Status,
                 ApplicationStatus = a.Application.Status,
                 PaymentStatus = a.Application.Payment != null ? a.Application.Payment.PaymentStatus : "—"
             })
             .ToListAsync();
+
+        var simpleRows = await _db.MarriageApplications.AsNoTracking()
+            .Include(a => a.User)
+            .Include(a => a.Payment)
+            .Where(a => a.AppointmentDate != null
+                && a.AppointmentDate.Value.Date == selected.ToDateTime(TimeOnly.MinValue).Date
+                && (a.AppointmentStatus == AppointmentSimpleStatuses.Pending
+                    || a.AppointmentStatus == AppointmentSimpleStatuses.Confirmed))
+            .OrderBy(a => a.AppointmentTime)
+            .Select(a => new StaffVerificationRow
+            {
+                ApplicationId = a.Id,
+                ReferenceNumber = "APT-" + a.Id.ToString("D6"),
+                ApplicantName = a.User != null ? a.User.Name : "—",
+                HusbandName = a.HusbandName,
+                WifeName = a.WifeName,
+                TimeLabel = a.AppointmentTime ?? "—",
+                AppointmentDateLabel = a.AppointmentDate.Value.ToString("dddd, dd MMM yyyy"),
+                AppointmentStatus = a.AppointmentStatus,
+                ApplicationStatus = a.Status,
+                PaymentStatus = a.Payment != null ? a.Payment.PaymentStatus : "—"
+            })
+            .ToListAsync();
+
+        var rows = timeSlotRows.Concat(simpleRows).OrderBy(r => r.TimeLabel).ToList();
 
         return View(new StaffVerificationListViewModel
         {
@@ -212,5 +236,77 @@ public class AdminAppointmentsController : Controller
         await _db.SaveChangesAsync();
         TempData["Message"] = "Correction requested. Applicant must update the application and book a new appointment.";
         return RedirectToAction("ApplicationDetails", "Admin", new { id = model.Id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequirePermission(AppPermissions.VerifyApplications)]
+    public async Task<IActionResult> ConfirmAppointment(int id)
+    {
+        var app = await _db.MarriageApplications.FindAsync(id);
+        if (app is null)
+            return NotFound();
+
+        app.AppointmentStatus = AppointmentSimpleStatuses.Confirmed;
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Appointment confirmed.";
+        return RedirectToAction("ApplicationDetails", "Admin", new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequirePermission(AppPermissions.VerifyApplications)]
+    public async Task<IActionResult> CompleteAppointment(int id)
+    {
+        var app = await _db.MarriageApplications.FindAsync(id);
+        if (app is null)
+            return NotFound();
+
+        app.AppointmentStatus = AppointmentSimpleStatuses.Completed;
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Appointment marked as completed.";
+        return RedirectToAction("ApplicationDetails", "Admin", new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequirePermission(AppPermissions.VerifyApplications)]
+    public async Task<IActionResult> CancelAppointment(int id)
+    {
+        var app = await _db.MarriageApplications.FindAsync(id);
+        if (app is null)
+            return NotFound();
+
+        app.AppointmentStatus = AppointmentSimpleStatuses.Cancelled;
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Appointment cancelled.";
+        return RedirectToAction("ApplicationDetails", "Admin", new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequirePermission(AppPermissions.VerifyApplications)]
+    public async Task<IActionResult> SetAppointment(int id, DateTime? appointmentDate, string? appointmentTime)
+    {
+        var app = await _db.MarriageApplications.FindAsync(id);
+        if (app is null)
+            return NotFound();
+
+        if (appointmentDate is null)
+        {
+            TempData["Error"] = "Please provide a date.";
+            return RedirectToAction("ApplicationDetails", "Admin", new { id });
+        }
+
+        app.AppointmentDate = appointmentDate.Value;
+        app.AppointmentTime = appointmentTime?.Trim();
+        app.AppointmentStatus = AppointmentSimpleStatuses.Pending;
+        await _db.SaveChangesAsync();
+
+        TempData["Message"] = "Appointment scheduled.";
+        return RedirectToAction("ApplicationDetails", "Admin", new { id });
     }
 }

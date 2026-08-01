@@ -89,7 +89,7 @@
                 {
                     <tr>
                         <td>@a.Id</td>
-                        <td>@a.User.Name</td>
+                        <td>@(a.User?.Name ?? "Walk-in Applicant")</td>
                         <td>@a.HusbandName &amp; @a.WifeName</td>
                         <td>@a.MarriageDate.ToString("yyyy-MM-dd")</td>
                         <td>

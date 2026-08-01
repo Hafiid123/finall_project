@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using online_mr_certi.Data;
 
@@ -11,9 +12,11 @@ using online_mr_certi.Data;
 namespace online_mr_certi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260720133154_MakeUserIdNullable")]
+    partial class MakeUserIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,10 +238,6 @@ namespace online_mr_certi.Data.Migrations
 
                     b.Property<DateTime?>("CertificateFeePaidAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("CertificateFeePaymentMethod")
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
 
                     b.Property<string>("CertificateFeeReceiptImage")
                         .HasMaxLength(500)

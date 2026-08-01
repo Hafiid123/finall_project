@@ -244,9 +244,8 @@ public class AdminWitnessFormModel
 
 public class AdminCreateApplicationViewModel
 {
-    [Required(ErrorMessage = "Please select the applicant account.")]
     [Display(Name = "Select Applicant")]
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
     [Required, MaxLength(200)]
     [Display(Name = "Full name")]
@@ -390,4 +389,9 @@ public class PaymentCheckoutViewModel
 
     [Display(Name = "Receipt image (JPG or PNG)")]
     public IFormFile? ReceiptImage { get; set; }
+
+    public bool IsOnlineAvailable { get; set; }
+
+    [MaxLength(50)]
+    public string? PaymentMethod { get; set; }
 }

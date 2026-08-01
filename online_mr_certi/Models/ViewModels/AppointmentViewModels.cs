@@ -68,6 +68,8 @@ public class StaffVerificationRow
     public string HusbandName { get; set; } = string.Empty;
     public string WifeName { get; set; } = string.Empty;
     public string TimeLabel { get; set; } = string.Empty;
+    public string AppointmentDateLabel { get; set; } = string.Empty;
+    public string AppointmentStatus { get; set; } = string.Empty;
     public string ApplicationStatus { get; set; } = string.Empty;
     public string PaymentStatus { get; set; } = string.Empty;
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 28, 2026 at 07:27 AM
+-- Generation Time: Aug 01, 2026 at 09:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -37,7 +37,7 @@ CREATE TABLE `admin_notification_read_states` (
 --
 
 INSERT INTO `admin_notification_read_states` (`UserId`, `LastReadAt`) VALUES
-(1, '2026-05-30 04:45:41.562143'),
+(1, '2026-07-24 14:25:36.023608'),
 (14, '2026-05-30 04:46:58.449745');
 
 -- --------------------------------------------------------
@@ -62,7 +62,7 @@ CREATE TABLE `appointments` (
 --
 
 INSERT INTO `appointments` (`Id`, `ApplicationId`, `TimeSlotId`, `AppointmentDate`, `ReferenceNumber`, `Status`, `BookedAt`, `CancelledAt`) VALUES
-(1, 22, 1, '2026-06-23 00:00:00.000000', 'APT-2026-000001', 'Completed', '2026-06-22 09:19:43.607859', NULL);
+(5, 33, 1, '2026-07-21 00:00:00.000000', 'APT-2026-000005', 'Completed', '2026-07-20 17:28:38.869241', NULL);
 
 -- --------------------------------------------------------
 
@@ -128,11 +128,9 @@ CREATE TABLE `certificates` (
 --
 
 INSERT INTO `certificates` (`Id`, `ApplicationId`, `CertificateFile`) VALUES
-(40, 12, 'uploads/certificates/12_d15adc9bcb63482aa3df0d67a934e528.pdf'),
-(64, 13, 'uploads/certificates/13_a29aa5c8cd274bf0ab3051176633f7f6.pdf'),
-(79, 20, 'uploads/certificates/20_65875d170c054ee9a386d1f2e8ac11e3.pdf'),
-(81, 21, 'uploads/certificates/21_be6e24cb95e54c9fb56c111203ab1bc9.pdf'),
-(82, 22, 'uploads/certificates/22_427d6a086c794623be3423672d8ddd77.pdf');
+(92, 32, 'uploads/certificates/32_73ff9008cb4d4adc9b138714f32a6729.pdf'),
+(93, 33, 'uploads/certificates/33_aa68cee2652b45beaba6cd9065d2f4de.pdf'),
+(94, 34, 'uploads/certificates/34_be2c3242129c4134967e4bee8751d3a2.pdf');
 
 -- --------------------------------------------------------
 
@@ -152,36 +150,18 @@ CREATE TABLE `documents` (
 --
 
 INSERT INTO `documents` (`Id`, `ApplicationId`, `FilePath`, `Category`) VALUES
-(14, 12, 'uploads/documents/0d8f0e040ea94b92afd38874045f7bfc.jpg', 'HusbandIdentityDocument'),
-(15, 12, 'uploads/documents/025ccc4712ba413f92d16e8db5b5a945.jpg', 'WifeIdentityDocument'),
-(16, 12, 'uploads/documents/3be87af91137493a8e8419b930a4ecd2.jpg', 'Witness1IdentityDocument'),
-(17, 12, 'uploads/documents/1912fd3770a34df38ebc17fcec1f85fc.jpg', 'Witness2IdentityDocument'),
-(18, 12, 'uploads/documents/1f31df29b4b847e384ec185fbe1d07a4.webp', 'HusbandPassportPhoto'),
-(19, 12, 'uploads/documents/3ba89cb1b34046bdb5710ea7c0997757.webp', 'WifePassportPhoto'),
-(20, 13, 'uploads/documents/e749c0a2d6e349e7b05147d6d8c3fb8f.jpg', 'HusbandIdentityDocument'),
-(21, 13, 'uploads/documents/0b94135800744b3db9dfcdf67c93c82e.jpg', 'WifeIdentityDocument'),
-(22, 13, 'uploads/documents/3b59d60360c640bba5a5866a89dbdacc.jpg', 'Witness1IdentityDocument'),
-(23, 13, 'uploads/documents/e297bd54bc0b4e2cb1aa363d55cd2f63.jpg', 'Witness2IdentityDocument'),
-(24, 13, 'uploads/documents/4d93b24bbbf84a36aff6deb38e202259.webp', 'HusbandPassportPhoto'),
-(25, 13, 'uploads/documents/32866cd6b44c460fbcfdbacd17ceeb90.webp', 'WifePassportPhoto'),
-(50, 18, '/uploads/7726fc67-ef4a-4850-a546-d51ceef81410_a15.jpg', 'HusbandIdentityDocument'),
-(51, 18, '/uploads/5c03f4ba-c92c-4d66-afc0-a082ebb1fdef_a15.jpg', 'HusbandPassportPhoto'),
-(52, 18, '/uploads/1e3d5ed4-2219-4a17-bbee-ea591ba6a45a_a15.jpg', 'WifeIdentityDocument'),
-(53, 18, '/uploads/18b3b23e-4a0d-434b-9e08-121ea3dee33b_a15.jpg', 'WifePassportPhoto'),
-(54, 18, '/uploads/437d8084-a1f0-4c16-8401-323296824581_a15.jpg', 'Witness1IdentityDocument'),
-(55, 18, '/uploads/c05a8052-0a0f-4261-a720-c5a903543baa_a15.jpg', 'Witness2IdentityDocument'),
-(56, 20, '/uploads/47799178-bdfb-46fb-8596-c16c73487a4c_a15.jpg', 'HusbandIdentityDocument'),
-(57, 20, '/uploads/593bb0af-b327-44a2-ad35-d7c3c3d7b154_a15.jpg', 'WifeIdentityDocument'),
-(58, 20, '/uploads/5218cae8-e0c6-4474-9d4a-32d3b1381cbb_a15.jpg', 'Witness1IdentityDocument'),
-(59, 20, '/uploads/2116a152-25fd-4b62-9e03-2e8991a22d50_a15.jpg', 'Witness2IdentityDocument'),
-(60, 21, 'uploads/documents/d4467b15468643e286cdfb3f28d260fe.jpg', 'HusbandIdentityDocument'),
-(61, 21, 'uploads/documents/a216d937df034bca943ea57f1d67a4d9.jpg', 'WifeIdentityDocument'),
-(62, 21, 'uploads/documents/8c3f5a9fc80d47dbbda9290ea3f15974.jpg', 'Witness1IdentityDocument'),
-(63, 21, 'uploads/documents/8d0524a549ae4e9291a2d29d45daaca2.jpg', 'Witness2IdentityDocument'),
-(64, 22, 'uploads/documents/694ada8094194b5faa5b00bb7dfa7420.jpg', 'HusbandIdentityDocument'),
-(65, 22, 'uploads/documents/bbd5e5edb87249528f14bcbd950e1af6.jpg', 'WifeIdentityDocument'),
-(66, 22, 'uploads/documents/28c37abd0a2f451793347203495fa8bc.jpg', 'Witness1IdentityDocument'),
-(67, 22, 'uploads/documents/1bb25825c5514bc7b41ee5cd59cd929d.jpg', 'Witness2IdentityDocument');
+(106, 32, '/uploads/c7049554-a1bf-4240-b566-24d7ef1ff24f_a15.jpg', 'HusbandIdentityDocument'),
+(107, 32, '/uploads/deb041bf-9ece-46a7-8df2-bc3a1053c86a_a15.jpg', 'WifeIdentityDocument'),
+(108, 32, '/uploads/0c33b0f6-12ef-4037-a1f1-8ef4ac341d02_a15.jpg', 'Witness1IdentityDocument'),
+(109, 32, '/uploads/605b9525-f0f8-4d1e-af4b-b76b4328e6ac_a15.jpg', 'Witness2IdentityDocument'),
+(110, 33, 'uploads/documents/b0ee673c46144eb09020e0f9829950bb.jpg', 'HusbandIdentityDocument'),
+(111, 33, 'uploads/documents/e3832d99c31d4f32a1f9045871f10808.jpg', 'WifeIdentityDocument'),
+(112, 33, 'uploads/documents/75e639ac31324ac1813f11a9d80efd02.jpg', 'Witness1IdentityDocument'),
+(113, 33, 'uploads/documents/d50ab91dfbe849119fe1491035882cfa.jpg', 'Witness2IdentityDocument'),
+(114, 34, '/uploads/18c4e3d8-933d-409f-8349-1af66c349db1_a15.jpg', 'HusbandIdentityDocument'),
+(115, 34, '/uploads/41c43333-c1fc-4a10-bf3e-669d1592ccf4_a15.jpg', 'WifeIdentityDocument'),
+(116, 34, '/uploads/46004f74-206d-4069-ba2c-ebfbd7468041_a15.jpg', 'Witness1IdentityDocument'),
+(117, 34, '/uploads/becd7474-aeb9-4a67-8fa2-9a8a00543ec2_a15.jpg', 'Witness2IdentityDocument');
 
 -- --------------------------------------------------------
 
@@ -203,8 +183,8 @@ CREATE TABLE `fees` (
 --
 
 INSERT INTO `fees` (`Id`, `ServiceName`, `Amount`, `IsActive`, `Currency`, `CreatedAt`) VALUES
-(1, 'Marriage Application', 15.00, 1, 'USD', '2026-05-02 09:15:25.238786'),
-(2, 'certificate', 15.10, 1, 'USD', '2026-05-02 09:15:25.238786');
+(1, 'Appointment Fee', 10.00, 1, 'USD', '2026-05-02 09:15:25.238786'),
+(3, 'Certificate Fee', 25.00, 1, 'USD', '2026-07-20 11:53:53.000000');
 
 -- --------------------------------------------------------
 
@@ -214,7 +194,7 @@ INSERT INTO `fees` (`Id`, `ServiceName`, `Amount`, `IsActive`, `Currency`, `Crea
 
 CREATE TABLE `marriage_applications` (
   `Id` int(11) NOT NULL,
-  `UserId` int(11) NOT NULL,
+  `UserId` int(11) DEFAULT NULL,
   `HusbandName` varchar(200) NOT NULL,
   `HusbandDob` datetime(6) NOT NULL,
   `HusbandIdNumber` varchar(100) NOT NULL,
@@ -248,20 +228,30 @@ CREATE TABLE `marriage_applications` (
   `HusbandReligion` varchar(100) DEFAULT NULL,
   `WifeReligion` varchar(100) DEFAULT NULL,
   `SheikhName` varchar(200) DEFAULT NULL,
-  `District` varchar(200) DEFAULT NULL
+  `District` varchar(200) DEFAULT NULL,
+  `AppointmentDate` datetime(6) DEFAULT NULL,
+  `AppointmentTime` varchar(50) DEFAULT NULL,
+  `AppointmentStatus` varchar(30) NOT NULL DEFAULT 'Pending',
+  `CertificateFeeStatus` varchar(30) DEFAULT NULL,
+  `CertificateFeeAmount` decimal(18,2) DEFAULT NULL,
+  `CertificateFeePaidAt` datetime(6) DEFAULT NULL,
+  `CertificateFeeVerifiedBy` varchar(200) DEFAULT NULL,
+  `CertificateFeeVerifiedAt` datetime(6) DEFAULT NULL,
+  `CertificateFeeReceiptImage` varchar(500) DEFAULT NULL,
+  `CertificateFeeSenderPhone` varchar(50) DEFAULT NULL,
+  `CertificateFeeTransactionNumber` varchar(100) DEFAULT NULL,
+  `CertificateFeeRejectionReason` varchar(500) DEFAULT NULL,
+  `CertificateFeePaymentMethod` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `marriage_applications`
 --
 
-INSERT INTO `marriage_applications` (`Id`, `UserId`, `HusbandName`, `HusbandDob`, `HusbandIdNumber`, `HusbandContactNumber`, `HusbandAddress`, `WifeName`, `WifeDob`, `WifeIdNumber`, `WifeContactNumber`, `WifeAddress`, `MarriageDate`, `MarriageLocation`, `Status`, `SubmissionDate`, `Remarks`, `DecisionDate`, `HusbandFatherName`, `HusbandMotherName`, `HusbandNationality`, `HusbandOccupation`, `HusbandResidenceStatus`, `HusbandMaritalStatus`, `WifeFatherName`, `WifeMotherName`, `WifeNationality`, `WifeOccupation`, `WifeResidenceStatus`, `WifeMaritalStatus`, `MarriageType`, `Meher`, `HusbandReligion`, `WifeReligion`, `SheikhName`, `District`) VALUES
-(12, 12, 'fhdfhdjsjdfs', '1996-05-16 00:00:00.000000', '564756', '75647856', 'gdfjhgdjfh', 'dfhjkdfhjkfsd', '1998-05-16 00:00:00.000000', '8744387', '74673468', 'hdfdsjkfsdhk', '2026-05-16 00:00:00.000000', 'hjdkjdhsa', 'Rejected', '2026-05-16 10:17:08.609707', 'kulaabo wll xogta', '2026-05-18 12:56:42.591914', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(13, 12, 'Maxmed Ahmed Diini', '1993-05-15 00:00:00.000000', '46264636', '061353636', 'Yaqshiid', 'Faadmo Daahir Nuur', '1998-05-18 00:00:00.000000', '6463473', '061426366', 'Yaqshiid', '2007-05-18 00:00:00.000000', 'Yaqshiid', 'Approved', '2026-05-18 13:01:29.123007', NULL, '2026-05-18 13:05:19.440271', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(18, 2, 'Cabdi cali geedi', '1988-05-06 00:00:00.000000', '465746547', '71746764', 'kaaran', 'Faadmo Daahir Nuur', '2001-07-05 00:00:00.000000', '545454', '646464', 'Hodan', '2016-04-05 00:00:00.000000', 'Hodan taleex', 'Approved', '2026-06-20 11:37:45.871073', NULL, NULL, 'cali geedi cali', 'Faadumo  xasan cali', 'Islam', 'Ganacsade', 'Resident', 'Single', 'Daahir Nuur cali', 'Hodan cabdi geedi', 'Islam', 'Gurijogto', 'Resident', 'Single', 'Religious', '500$', NULL, NULL, NULL, NULL),
-(20, 19, 'Yasiin xasan cali', '2000-07-07 00:00:00.000000', '6756375637', '76575647', 'Hodan', 'Nuuro cali geedi', '2001-06-06 00:00:00.000000', '6757564', '736457657348', 'Hodan', '2010-06-06 00:00:00.000000', 'Muqdisho', 'Approved', '2026-06-20 10:45:04.474446', NULL, '2026-06-21 10:33:11.087710', 'Xasan cali acmed', 'Faadumo  xasan yusuf', NULL, 'Bajaaj', NULL, 'Ma guursan', 'Cali geedi xasan', 'Nuurto Cali Axmed', NULL, 'Gurijogto', NULL, 'Guursatay', 'Lacag', '500$', 'Islam', 'islam', 'Maxamed Xasan Axmed', 'Hodan'),
-(21, 17, 'Maxamed xasan Axmed', '1996-06-21 00:00:00.000000', '7757655565', '657465447', 'Kaaran', 'Xaawo Axmed Nuur', '1998-06-21 00:00:00.000000', '46347367', '7356375', 'Kaaran', '2026-06-21 00:00:00.000000', 'Banaadir', 'Approved', '2026-06-21 14:57:10.550205', NULL, '2026-06-21 15:01:10.764427', 'Xasan Axmed cali', 'Safiyo Cbdi Nuur', NULL, 'Taksiile', NULL, 'Ma guursan', 'Axmed Nuur Farax', 'Nuurto Cali Axmed', NULL, 'Macalimad', NULL, 'Ma guursan', 'Dahab', '50 gram', 'Islam', 'islam', 'Muuse Nuur Gacal', 'Hodan'),
-(22, 20, 'Maxamed xasan Axmed', '1996-06-22 00:00:00.000000', '545454', '756374367', 'Hodan', 'Nuuro cali geedi', '1998-06-22 00:00:00.000000', '7356376537', '45454', 'Hodan', '2013-06-22 00:00:00.000000', 'Muqdisho', 'Approved', '2026-06-22 09:19:11.631084', NULL, '2026-06-22 09:23:29.858516', NULL, 'Nuuro Xasan cali', NULL, 'Bajaaj', NULL, 'Guursaday', NULL, 'Nuurto Cali Axmed', NULL, 'Gurijogto', NULL, 'Ma guursan', 'Dahab', '5 GR', 'Islam', 'islam', 'Maxamed Xasan Axmed', 'Kaaran');
+INSERT INTO `marriage_applications` (`Id`, `UserId`, `HusbandName`, `HusbandDob`, `HusbandIdNumber`, `HusbandContactNumber`, `HusbandAddress`, `WifeName`, `WifeDob`, `WifeIdNumber`, `WifeContactNumber`, `WifeAddress`, `MarriageDate`, `MarriageLocation`, `Status`, `SubmissionDate`, `Remarks`, `DecisionDate`, `HusbandFatherName`, `HusbandMotherName`, `HusbandNationality`, `HusbandOccupation`, `HusbandResidenceStatus`, `HusbandMaritalStatus`, `WifeFatherName`, `WifeMotherName`, `WifeNationality`, `WifeOccupation`, `WifeResidenceStatus`, `WifeMaritalStatus`, `MarriageType`, `Meher`, `HusbandReligion`, `WifeReligion`, `SheikhName`, `District`, `AppointmentDate`, `AppointmentTime`, `AppointmentStatus`, `CertificateFeeStatus`, `CertificateFeeAmount`, `CertificateFeePaidAt`, `CertificateFeeVerifiedBy`, `CertificateFeeVerifiedAt`, `CertificateFeeReceiptImage`, `CertificateFeeSenderPhone`, `CertificateFeeTransactionNumber`, `CertificateFeeRejectionReason`, `CertificateFeePaymentMethod`) VALUES
+(32, NULL, 'Maxamed xasan Axmed', '1989-07-20 00:00:00.000000', '7676777', '62263536', 'kaaran', 'Xalimo Xsan Axmed', '2012-07-20 00:00:00.000000', '3743443', '56223235', 'Kaaran', '2021-07-20 00:00:00.000000', 'Banaadir', 'Approved', '2026-07-20 16:54:37.383876', NULL, NULL, NULL, 'Faadumo  xasan cali', NULL, 'Bajaaj', NULL, 'Ma guursan', NULL, 'xaawo xasan cali', NULL, 'Gurijogto', NULL, 'Ma guursan', 'Dahab', '50 gram', 'Islam', 'islam', 'sheikh Dabcasar', 'Kaaran', NULL, NULL, 'Pending', NULL, 10.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(33, 17, 'kdjfdkjfdk', '1996-07-20 00:00:00.000000', '4454', '454', 'dksdjskdjsk', 'msjskdjsk', '1998-07-20 00:00:00.000000', '34343', '3435353', 'sdjskdjsk', '2026-07-20 00:00:00.000000', 'sjhdhdsj', 'Approved', '2026-07-20 17:16:56.978737', NULL, '2026-07-20 17:55:08.540701', NULL, 'dkdkfjdk', NULL, 'dfhdhd', NULL, 'Ma guursan', NULL, 'sdsjdkdjsk', NULL, 'sjdsjshdjs', NULL, 'Ma guursan', 'Lacag', '33', 'sksjdsk', 'sdksdjsk', 'kjksdjsdjsdkj', 'sskdjsdk', NULL, NULL, 'Pending', 'Paid', 10.00, '2026-07-20 17:54:40.337076', NULL, NULL, NULL, NULL, NULL, NULL, 'Office'),
+(34, 25, 'jdshdjshdjs', '2026-07-21 00:00:00.000000', '2837238278', '87878787', 'shdjshdsj', 'jshdjsdhsjs', '2026-07-21 00:00:00.000000', '747376473', '338473874', 'hdjsdhsjdhs', '2026-07-21 00:00:00.000000', 'hddjdhs', 'Approved', '2026-07-21 07:06:52.044255', NULL, NULL, NULL, 'jshasjahjhj', NULL, 'sjshjshjhj', NULL, 'Guursaday', NULL, 'sjhshjshds', NULL, 'wsdgsdgsdjs', NULL, 'Guursatay', 'Dahab', '3673', 'dhhfjshds', 'hfjdhfdj', 'hdhdkdfhdksfdfks', 'hjshdsjdhsd', NULL, NULL, 'Pending', 'Paid', 10.00, '2026-07-21 07:07:24.645441', NULL, NULL, NULL, NULL, NULL, NULL, 'Office');
 
 -- --------------------------------------------------------
 
@@ -286,16 +276,12 @@ CREATE TABLE `marriage_witnesses` (
 --
 
 INSERT INTO `marriage_witnesses` (`Id`, `ApplicationId`, `SortOrder`, `FullName`, `DateOfBirth`, `IdNumber`, `ContactNumber`, `Address`, `MotherName`) VALUES
-(19, 12, 1, 'hdfhfgdjfjdsgfsd', '1991-05-16 00:00:00.000000', '3634673463', '67534756834', 'dhfdjshskdjh', NULL),
-(20, 12, 2, 'jdhfjdfhdfkjsdh', '1986-05-16 00:00:00.000000', '8375678562', '436537865', 'dhfjkjfgskjfka', NULL),
-(21, 13, 1, 'Faarax Geedi Cali', '1991-05-18 00:00:00.000000', '647375377', '63463466', 'Kaaran', NULL),
-(22, 13, 2, 'Maxamed Ahmed Cali', '1986-05-18 00:00:00.000000', '757347347', '612634848', 'Yaqshiid', NULL),
-(35, 20, 1, 'Xasan geedi nuur', '0001-08-14 00:00:00.000000', '6547547', '75636537', 'Muqdisho, Deynile', 'Hadiyo xasan cali'),
-(36, 20, 2, 'Cali nuur axmed', '2003-06-18 00:00:00.000000', '7356753', '63756375637', 'Muqdisho, Hodan', 'Kaafiyo cali nuur'),
-(37, 21, 1, 'c/laahi xasan nuur', '1991-06-21 00:00:00.000000', '73637637', '7673637', 'Banaadir, Kaaran', 'Bahjo cali geedi'),
-(38, 21, 2, 'Ilyaas Abdi Nuur', '1986-06-21 00:00:00.000000', '73467436', '763463743', 'Banaadir , Kaaran', 'Khadiijo Abdi Nuur'),
-(39, 22, 1, 'Cali Axmed Cbdi', '1991-06-22 00:00:00.000000', '54454', '535353', 'Banaadir, Hodan', 'Bahjo cali geedi'),
-(40, 22, 2, 'Cali nuur axmed', '1986-06-22 00:00:00.000000', '545454', '533535', 'Muqdisho, Hodan', 'Kaafiyo cali nuur');
+(59, 32, 1, 'Xasan geedi nuur', '1992-07-20 00:00:00.000000', '37634747', '634747436', 'Banaadir, Hodan', 'Nuuo xasan cali'),
+(60, 32, 2, 'Cali nuur axmed', '2007-07-20 00:00:00.000000', '226734343', '376434343', 'Banaadir, Yaqshiid', 'xaawo geedi nuur'),
+(61, 33, 1, 'jsdjsdhsdsjhj', '1991-07-20 00:00:00.000000', '36474637', '7346374637', 'jdhjdshhj', 'shdhdsdhsjh'),
+(62, 33, 2, 'jshdjhsdjs', '1986-07-20 00:00:00.000000', '3764736', '73736', 'jhjhdjdhsj', 'shdshdsdjh'),
+(63, 34, 1, 'shdhsjdhsjdhdjs', '2026-07-21 00:00:00.000000', '3838484738', '6374634367', 'shjhdshdsjdh', 'sdhsjdhsjdhs'),
+(64, 34, 2, 'sdyudsuddsu', '2026-07-21 00:00:00.000000', '746723723', '3763746343', 'shdjhsdjhdhdjs', 'sjhdhsjhdsdhj');
 
 -- --------------------------------------------------------
 
@@ -310,24 +296,28 @@ CREATE TABLE `payments` (
   `PaymentStatus` varchar(30) NOT NULL,
   `PaymentDate` datetime(6) DEFAULT NULL,
   `ReceiptImage` varchar(500) DEFAULT NULL,
-  `UserId` int(11) NOT NULL,
+  `UserId` int(11) DEFAULT NULL,
   `FeeId` int(11) NOT NULL,
   `SenderPhone` varchar(50) DEFAULT NULL,
   `TransactionNumber` varchar(100) DEFAULT NULL,
-  `CreatedAt` datetime(6) NOT NULL
+  `CreatedAt` datetime(6) NOT NULL,
+  `ApplicationFee` decimal(18,2) NOT NULL DEFAULT 0.00,
+  `PaymentMethod` varchar(20) DEFAULT NULL,
+  `PaymentProofPath` varchar(500) DEFAULT NULL,
+  `TransactionReference` varchar(100) DEFAULT NULL,
+  `RejectionReason` varchar(500) DEFAULT NULL,
+  `VerifiedBy` varchar(200) DEFAULT NULL,
+  `VerifiedAt` datetime(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payments`
 --
 
-INSERT INTO `payments` (`Id`, `ApplicationId`, `Amount`, `PaymentStatus`, `PaymentDate`, `ReceiptImage`, `UserId`, `FeeId`, `SenderPhone`, `TransactionNumber`, `CreatedAt`) VALUES
-(10, 12, 15.00, 'Approved', '2026-05-16 10:18:29.776444', 'uploads/payments/12_8baaf88aac654c22b2f557a40c20a538.jpg', 12, 1, '645646', '487538457', '2026-05-16 10:17:08.750161'),
-(11, 13, 15.00, 'Approved', '2026-05-18 13:03:07.034239', 'uploads/payments/13_eec93cf686c84a07a9d43127dbb765c0.jpg', 12, 1, '61967786', '6636343264', '2026-05-18 13:01:29.482089'),
-(22, 21, 15.00, 'Approved', '2026-06-21 14:58:50.467897', 'uploads/payments/21_0527d0a8c2fe439f942d46609edd8392.png', 17, 1, '366434647', '77634737', '2026-06-21 14:57:10.668528'),
-(23, 22, 15.00, 'Approved', '2026-06-22 09:23:29.858345', NULL, 20, 1, '—', 'PAY_AT_OFFICE', '2026-06-22 09:19:11.905988'),
-(24, 18, 15.00, 'Pending', NULL, NULL, 2, 1, NULL, NULL, '2026-06-25 12:02:26.287650'),
-(25, 20, 15.00, 'Pending', NULL, NULL, 19, 1, NULL, NULL, '2026-06-25 12:02:26.385059');
+INSERT INTO `payments` (`Id`, `ApplicationId`, `Amount`, `PaymentStatus`, `PaymentDate`, `ReceiptImage`, `UserId`, `FeeId`, `SenderPhone`, `TransactionNumber`, `CreatedAt`, `ApplicationFee`, `PaymentMethod`, `PaymentProofPath`, `TransactionReference`, `RejectionReason`, `VerifiedBy`, `VerifiedAt`) VALUES
+(36, 32, 25.00, 'Approved', '2026-07-20 16:55:44.633302', NULL, NULL, 1, '61233252', '62652645', '2026-07-20 16:54:37.958787', 15.00, 'Office', NULL, NULL, NULL, NULL, NULL),
+(37, 33, 15.00, 'Approved', '2026-07-20 17:54:40.333876', 'uploads/payments/33_1f2393555c374bbca318b9a6a3e806aa.jpg', 17, 1, '622224', '34343', '2026-07-20 17:16:57.296160', 15.00, 'Office', NULL, NULL, NULL, NULL, NULL),
+(38, 34, 25.00, 'Approved', '2026-07-21 07:08:41.731418', NULL, 25, 1, '846574', '746437', '2026-07-21 07:06:52.661983', 15.00, 'Office', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -431,26 +421,33 @@ CREATE TABLE `users` (
   `Password` varchar(500) NOT NULL,
   `Role` varchar(50) NOT NULL,
   `PaymentStatus` varchar(30) NOT NULL DEFAULT 'Unpaid',
-  `RoleId` int(11) DEFAULT NULL
+  `RoleId` int(11) DEFAULT NULL,
+  `ResetOtpCode` varchar(6) DEFAULT NULL,
+  `ResetOtpExpiry` varchar(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`Id`, `Name`, `Email`, `Password`, `Role`, `PaymentStatus`, `RoleId`) VALUES
-(1, 'System Administrator', 'admin@system.local', '$2a$11$DHJI2HRt4i0XCz8Nq0214.dOunhx2LG7P0ObaEsuviwA7MoKj.Ls6', 'Admin', 'Unpaid', 2),
-(2, 'cali', 'cali@gmail.com', '$2a$11$KfPlOFqDGcfwkX8iMeVt1e1kFuDkRGTxS4UlcrQqgc5t8wsqlcJpe', 'User', 'Paid', 1),
-(6, 'ahmed', 'ahmed@gmail.com', '$2a$11$gz/SDZG5L3/R5XsnjJgZw.tWvqwmPARlcj4PqUt9HXL8PF.EnwSO2', 'User', 'Unpaid', 1),
-(7, 'moha abdi ali', 'moha12@gmail.com', '$2a$11$EAnldWG6OX5bNxQy3yJpAOBEqC0zD9BKjTdHLRUnKWsZFXypw.4NS', 'User', 'Paid', 1),
-(11, 'yuu', 'yuu@gmail.com', '$2a$11$gXEfqbA69t0.LsUhUbHWpe86HXP3Miwk9hXigIDv5wOnr9aO9lUqC', 'Staff', 'Unpaid', 1),
-(12, 'nuuro', 'nuuro@gmail.com', '$2a$11$3SPKgDivkIqUocQlojlzR.h91.cJskf25kzEAUsKdbMOQFy3dnmTW', 'User', 'Paid', 3),
-(14, 'abdihafiid abdi', 'hafiidabdi6@gmail.com', '$2a$11$L1bZrVbnVm0y8fzMU.RB7uChgpeQPje/Jx7zkkDujxCYuXIrB06My', 'Admin', 'Unpaid', 2),
-(16, 'cabdi', 'cabdi@gmail.com', '$2a$11$eYXZpZsDCN6.NSRJIYtBcu8UU94S6eGzMHXGPtcBf4ak.E9ref/lK', 'User', 'Unpaid', NULL),
-(17, 'axmed', 'axmed@gmail.com', '$2a$11$J76Erx5GAONPrS3/guX4AeyNX8iRPNGo0LDhjeq3ucxGuESwYyxXe', 'User', 'Paid', 3),
-(18, 'Hafso', 'Hafso@gmail.com', '$2a$11$39UZI6dzFKyWCr6gMdjAZ.4UzYuHrQW3KiWGq8Mr/dr44H1UQ.5tK', 'User', 'Unpaid', NULL),
-(19, 'kaafi', 'kaafi@gmail.com', '$2a$11$5zC6JAxNkd/Gt1ZWjkqqauYGtqIrjEzMW7AuvBS5T/X6O/yF36.z2', 'User', 'Unpaid', NULL),
-(20, 'Nuur', 'nuur@gmail.com', '$2a$11$3R9vSwH7VumI5FO1ZoytauYLcEFp5xiGwTDzK0fIMywbUJEUODsta', 'User', 'Unpaid', 3);
+INSERT INTO `users` (`Id`, `Name`, `Email`, `Password`, `Role`, `PaymentStatus`, `RoleId`, `ResetOtpCode`, `ResetOtpExpiry`) VALUES
+(1, 'System Administrator', 'admin@system.local', '$2a$11$DHJI2HRt4i0XCz8Nq0214.dOunhx2LG7P0ObaEsuviwA7MoKj.Ls6', 'Admin', 'Unpaid', 2, NULL, NULL),
+(2, 'cali', 'cali@gmail.com', '$2a$11$KfPlOFqDGcfwkX8iMeVt1e1kFuDkRGTxS4UlcrQqgc5t8wsqlcJpe', 'User', 'Paid', 1, NULL, NULL),
+(6, 'ahmed', 'ahmed@gmail.com', '$2a$11$gz/SDZG5L3/R5XsnjJgZw.tWvqwmPARlcj4PqUt9HXL8PF.EnwSO2', 'User', 'Unpaid', 1, NULL, NULL),
+(7, 'moha abdi ali', 'moha12@gmail.com', '$2a$11$EAnldWG6OX5bNxQy3yJpAOBEqC0zD9BKjTdHLRUnKWsZFXypw.4NS', 'User', 'Paid', 1, NULL, NULL),
+(11, 'yuu', 'yuu@gmail.com', '$2a$11$gXEfqbA69t0.LsUhUbHWpe86HXP3Miwk9hXigIDv5wOnr9aO9lUqC', 'Staff', 'Unpaid', 1, NULL, NULL),
+(12, 'nuuro', 'nuuro@gmail.com', '$2a$11$3SPKgDivkIqUocQlojlzR.h91.cJskf25kzEAUsKdbMOQFy3dnmTW', 'User', 'Paid', 3, NULL, NULL),
+(14, 'abdihafiid abdi', 'hafiidabdi6@gmail.com', '$2a$11$L1bZrVbnVm0y8fzMU.RB7uChgpeQPje/Jx7zkkDujxCYuXIrB06My', 'Admin', 'Unpaid', 2, NULL, NULL),
+(16, 'cabdi', 'cabdi@gmail.com', '$2a$11$eYXZpZsDCN6.NSRJIYtBcu8UU94S6eGzMHXGPtcBf4ak.E9ref/lK', 'User', 'Unpaid', NULL, NULL, NULL),
+(17, 'axmed', 'axmed@gmail.com', '$2a$11$J76Erx5GAONPrS3/guX4AeyNX8iRPNGo0LDhjeq3ucxGuESwYyxXe', 'User', 'Paid', 3, NULL, NULL),
+(18, 'Hafso', 'Hafso@gmail.com', '$2a$11$39UZI6dzFKyWCr6gMdjAZ.4UzYuHrQW3KiWGq8Mr/dr44H1UQ.5tK', 'User', 'Unpaid', NULL, NULL, NULL),
+(19, 'kaafi', 'kaafi@gmail.com', '$2a$11$5zC6JAxNkd/Gt1ZWjkqqauYGtqIrjEzMW7AuvBS5T/X6O/yF36.z2', 'User', 'Unpaid', NULL, NULL, NULL),
+(20, 'Nuur cali', 'nuur@gmail.com', '$2a$11$3R9vSwH7VumI5FO1ZoytauYLcEFp5xiGwTDzK0fIMywbUJEUODsta', 'User', 'Unpaid', 3, NULL, NULL),
+(21, 'test', 'test@gmail.com', '$2a$11$toOOr2yaaDAJSIWl0G2WY.OT7G9Lh7H67E4oFf9jCVIsFYkSBOjjW', 'User', 'Unpaid', NULL, NULL, NULL),
+(22, 'ABDUQADIR AWYS MOHAMED', 'shaatax@123', '$2a$11$UJHHM1/Jg4E9XukJPHhKXePPv1hWhi8RggwYiuxPhyi4txLq.ktAi', 'User', 'Unpaid', 3, NULL, NULL),
+(23, 'mustaf husein', 'mustaf@gmail.com', '$2a$11$WHwrS7o1lxYUXHmbWweQgOPynaJq.lGOV.bhQHdSudktCz548x9x6', 'User', 'Unpaid', 3, NULL, NULL),
+(24, 'abdirah', 'dalnuurshe758@gmail.com', '$2a$11$.m91Znf2uuiTHzCGYDXyceBE/MhOT5tdnIqwrEFMon5b0qGy36HH6', 'User', 'Unpaid', 3, NULL, NULL),
+(25, 'jdhhfd', 'hhhh@gmail.com', '$2a$11$dF6mL0n7HEQK4uiThetwquynuwhiyE.oNSR4fDUqI/poJhC96yQtO', 'User', 'Paid', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -483,7 +480,12 @@ INSERT INTO `__efmigrationshistory` (`MigrationId`, `ProductVersion`) VALUES
 ('20260526150000_RenameWitnessFatherNameToMotherName', '8.0.11'),
 ('20260621120000_AddMarriageDistrict', '8.0.11'),
 ('20260622120000_AddAppointmentScheduling', '8.0.11'),
-('20260622120100_AllowMultipleAppointmentsPerApplication', '8.0.11');
+('20260622120100_AllowMultipleAppointmentsPerApplication', '8.0.11'),
+('20260720100000_AddPaymentAndAppointmentFields', '8.0.11'),
+('20260720110000_AddCertificateFeeTracking', '8.0.11'),
+('20260720120000_SeedRequiredFees', '8.0.11'),
+('20260720133154_MakeUserIdNullable', '8.0.11'),
+('20260720144753_AddCertificateFeePaymentMethod', '8.0.11');
 
 --
 -- Indexes for dumped tables
@@ -603,7 +605,7 @@ ALTER TABLE `__efmigrationshistory`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `appointment_time_slots`
@@ -621,37 +623,37 @@ ALTER TABLE `appointment_working_days`
 -- AUTO_INCREMENT for table `certificates`
 --
 ALTER TABLE `certificates`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 
 --
 -- AUTO_INCREMENT for table `documents`
 --
 ALTER TABLE `documents`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT for table `fees`
 --
 ALTER TABLE `fees`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `marriage_applications`
 --
 ALTER TABLE `marriage_applications`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `marriage_witnesses`
 --
 ALTER TABLE `marriage_witnesses`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `permissions`
@@ -669,7 +671,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Constraints for dumped tables
@@ -704,7 +706,7 @@ ALTER TABLE `documents`
 -- Constraints for table `marriage_applications`
 --
 ALTER TABLE `marriage_applications`
-  ADD CONSTRAINT `FK_marriage_applications_users_UserId` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`);
+  ADD CONSTRAINT `FK_marriage_applications_users_UserId` FOREIGN KEY (`UserId`) REFERENCES `users` (`Id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `marriage_witnesses`

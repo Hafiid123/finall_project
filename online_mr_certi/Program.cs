@@ -154,6 +154,7 @@ using (var scope = app.Services.CreateScope())
                     UserId = marriageApp.UserId,
                     FeeId = feeRow.Id,
                     Amount = feeRow.Amount,
+                    ApplicationFee = feeRow.Amount,
                     PaymentStatus = PaymentStatuses.Pending,
                     PaymentDate = null,
                     ReceiptImage = null,

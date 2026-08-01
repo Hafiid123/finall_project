@@ -16,6 +16,16 @@ public class AdminUserEditViewModel
 
     [Required]
     public string Role { get; set; } = AppRoles.User;
+
+    [DataType(DataType.Password)]
+    [MinLength(8, ErrorMessage = "Password-ku waa inuu ka koobnaadaa ugu yaraan 8 xaraf.")]
+    [Display(Name = "Password cusub (ka tag banaan haddii aadan beddeli rabin)")]
+    public string? NewPassword { get; set; }
+
+    [DataType(DataType.Password)]
+    [Display(Name = "Xaqiiji password-ka cusub")]
+    [Compare(nameof(NewPassword), ErrorMessage = "Password-yadu ma waafaqsana.")]
+    public string? ConfirmNewPassword { get; set; }
 }
 
 public class AdminCreateUserViewModel

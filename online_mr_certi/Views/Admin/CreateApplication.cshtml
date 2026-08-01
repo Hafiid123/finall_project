@@ -21,10 +21,10 @@
         <div class="card-body">
             <div class="form-group">
                 <label asp-for="UserId" class="font-weight-bold">
-                    Select Registered Applicant <span class="text-danger">*</span>
+                    Select Registered Applicant (Optional)
                 </label>
-                <select asp-for="UserId" class="form-control" required>
-                    <option value="">-- Select Applicant --</option>
+                <select asp-for="UserId" class="form-control">
+                    <option value="">-- No Account / Guest Applicant --</option>
                     @if (ViewBag.Users != null)
                     {
                         foreach (var user in ViewBag.Users)
@@ -94,8 +94,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="HusbandMaritalStatus"></label>
-                        <select asp-for="HusbandMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
-                            <option value="">— Select —</option>
+                        <select asp-for="HusbandMaritalStatus" class="form-control">
+                            <option value="">—</option>
+                            <option value="Guursaday">Guursaday</option>
+                            <option value="MaGuursan">Ma guursan</option>
                         </select>
                         <span asp-validation-for="HusbandMaritalStatus" class="text-danger small"></span>
                     </div>
@@ -190,8 +192,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="WifeMaritalStatus"></label>
-                        <select asp-for="WifeMaritalStatus" asp-items="Html.GetEnumSelectList<MaritalStatus>()" class="form-control">
+                        <select asp-for="WifeMaritalStatus" class="form-control">
                             <option value="">— Select —</option>
+                            <option value="Guursatay">Guursatay</option>
+                            <option value="MaGuursan">Ma guursan</option>
                         </select>
                         <span asp-validation-for="WifeMaritalStatus" class="text-danger small"></span>
                     </div>

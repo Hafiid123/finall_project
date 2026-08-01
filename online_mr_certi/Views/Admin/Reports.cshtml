@@ -273,7 +273,9 @@ function statusBadge(s) {
 }
 
 function payBadge(p) {
-    if (p === 'Approved') return '<span class="badge badge-primary">Paid</span>';
+    if (p === 'Approved') return '<span class="badge badge-success">Paid</span>';
+    if (p === 'Pending')  return '<span class="badge badge-warning">Pending</span>';
+    if (p === 'Rejected') return '<span class="badge badge-danger">Rejected</span>';
     return '<span class="badge badge-secondary">Unpaid</span>';
 }
 
@@ -363,7 +365,7 @@ function printReport() {
             '<td>' + r.hus + '</td>' +
             '<td>' + r.wife + '</td>' +
             '<td>$' + parseFloat(r.amt).toFixed(2) + '</td>' +
-            '<td>' + (r.pay === 'Approved' ? 'Paid' : 'Unpaid') + '</td>' +
+            '<td>' + (r.pay === 'Approved' ? 'Paid' : r.pay === 'Pending' ? 'Pending' : r.pay === 'Rejected' ? 'Rejected' : 'Unpaid') + '</td>' +
             '<td>' + r.sta + '</td>' +
             '<td>' + r.dat + '</td>' +
           '</tr>').join('');

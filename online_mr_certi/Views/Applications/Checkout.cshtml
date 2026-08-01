@@ -356,78 +356,128 @@
     </div>
 </div>
 
-<!-- PAYMENT INSTRUCTIONS -->
-<div class="pay-card accent-primary">
-    <div class="pay-card-header header-accent"><i class="fas fa-mobile-alt me-2"></i>Payment instructions</div>
-    <div class="pay-card-body">
-        <p class="pay-number-label">Send to this number:</p>
-        <div class="pay-number-badge"><i class="fas fa-phone"></i> @Model.MobileMoneyNumber</div>
-        <ol class="pay-steps">
-            <li>Open <strong>EVC Plus</strong>, <strong>ZAAD</strong>, or your mobile money app.</li>
-            <li>Send the <strong>exact amount</strong> shown above to the number displayed.</li>
-            <li><code>*712*61XXXXXX</code></li>
-            <li>Keep the receipt screenshot or photo — you will upload it below.</li>
-        </ol>
-    </div>
-</div>
-
-<!-- WARNING ALERT -->
-<div class="pay-alert">
-    <div class="pay-alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
-    <div>
-        <strong>Important</strong>
-        Enter your transaction details carefully. Your payment will be verified by an administrator before your application proceeds.
-    </div>
-</div>
-
-<!-- SUBMIT PROOF FORM -->
+@if (Model.IsOnlineAvailable)
+{
+<!-- PAYMENT METHOD SELECTION -->
 <div class="pay-card mb-0">
-    <div class="pay-card-header"><i class="fas fa-receipt me-2"></i>Submit payment proof</div>
+    <div class="pay-card-header"><i class="fas fa-credit-card me-2"></i>Choose payment method</div>
     <div class="pay-card-body">
-        <form asp-action="Checkout" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="ApplicationId" />
-            <input type="hidden" asp-for="FeeName" />
-            <input type="hidden" asp-for="Amount" />
-            <input type="hidden" asp-for="Currency" />
-            <input type="hidden" asp-for="MobileMoneyNumber" />
-            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
-
-            <div class="pay-form-group">
-                <label asp-for="SenderPhone" class="pay-label"></label>
-                <input asp-for="SenderPhone" class="pay-input" autocomplete="tel" placeholder="Phone used to send payment" />
-                <span asp-validation-for="SenderPhone" class="pay-error"></span>
+        <div class="pay-form-group">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="PaymentMethod" id="methodOnline" value="@PaymentMethods.Online" checked
+                       onchange="document.getElementById('onlineSection').style.display='block';document.getElementById('officeSection').style.display='none';" />
+                <label class="form-check-label fw-bold" for="methodOnline">
+                    <i class="fas fa-globe text-primary me-1"></i> Pay Online
+                </label>
+                <p class="text-muted small mb-0 ms-4">Upload your payment proof (receipt, screenshot, or transaction ID). An administrator will verify it.</p>
             </div>
-
-            <div class="pay-form-group">
-                <label asp-for="TransactionNumber" class="pay-label"></label>
-                <input asp-for="TransactionNumber" class="pay-input" placeholder="Reference / transaction ID from SMS or receipt" />
-                <span asp-validation-for="TransactionNumber" class="pay-error"></span>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="PaymentMethod" id="methodOffice" value="@PaymentMethods.Office"
+                       onchange="document.getElementById('onlineSection').style.display='none';document.getElementById('officeSection').style.display='block';" />
+                <label class="form-check-label fw-bold" for="methodOffice">
+                    <i class="fas fa-building text-warning me-1"></i> Pay at Office
+                </label>
+                <p class="text-muted small mb-0 ms-4">Pay when you visit the office for your appointment. No upload required.</p>
             </div>
-
-            <div class="pay-form-group">
-                <label asp-for="ReceiptImage" class="pay-label"></label>
-                <input asp-for="ReceiptImage" class="pay-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
-                <span asp-validation-for="ReceiptImage" class="pay-error"></span>
-                <div class="pay-hint">JPG, JPEG, or PNG only (max 10 MB).</div>
-            </div>
-
-            <button type="submit" class="btn-pay-submit"><i class="fas fa-check"></i> Submit payment proof</button>
-            <a asp-action="Details" asp-route-id="@Model.ApplicationId" class="btn-pay-cancel">Cancel</a>
-        </form>
-
-        <div class="pay-divider-wrap">
-            <div class="pay-divider-line"></div>
-            <span class="pay-divider-text">Or</span>
-            <div class="pay-divider-line"></div>
         </div>
+    </div>
+</div>
+}
+else
+{
+<div class="pay-card mb-0">
+    <div class="pay-card-body py-4 text-center">
+        <p class="pay-office-text mb-0" style="font-size:15px;">
+            <i class="fas fa-building text-warning me-2"></i>
+            <strong>Please pay the Appointment Fee at the office.</strong>
+            Online payment is not available.
+        </p>
+    </div>
+</div>
+}
 
-        <form asp-action="PayAtOffice" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@Model.ApplicationId" />
-            <p class="pay-office-text"><strong>Or pay at the office</strong> when you visit for your appointment.</p>
-            <button type="submit" class="btn-pay-office"><i class="fas fa-building"></i> I will pay at the office</button>
-        </form>
+@if (Model.IsOnlineAvailable)
+{
+<!-- PAYMENT INSTRUCTIONS (Online) -->
+<div id="onlineSection" style="display:block;">
+    <div class="pay-card accent-primary">
+        <div class="pay-card-header header-accent"><i class="fas fa-mobile-alt me-2"></i>Payment instructions</div>
+        <div class="pay-card-body">
+            <p class="pay-number-label">Send to this number:</p>
+            <div class="pay-number-badge"><i class="fas fa-phone"></i> @Model.MobileMoneyNumber</div>
+            <ol class="pay-steps">
+                <li>Open <strong>EVC Plus</strong>, <strong>ZAAD</strong>, or your mobile money app.</li>
+                <li>Send the <strong>exact amount</strong> shown above to the number displayed.</li>
+                <li><code>*712*61XXXXXX</code></li>
+                <li>Keep the receipt screenshot or photo — you will upload it below.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- WARNING ALERT -->
+    <div class="pay-alert">
+        <div class="pay-alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div>
+            <strong>Important</strong>
+            Enter your transaction details carefully. Your payment will be verified by an administrator before your application proceeds.
+        </div>
+    </div>
+
+    <!-- SUBMIT PROOF FORM -->
+    <div class="pay-card">
+        <div class="pay-card-header"><i class="fas fa-receipt me-2"></i>Submit payment proof</div>
+        <div class="pay-card-body">
+            <form asp-action="Checkout" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="FeeName" />
+                <input type="hidden" asp-for="Amount" />
+                <input type="hidden" asp-for="Currency" />
+                <input type="hidden" asp-for="MobileMoneyNumber" />
+                <input type="hidden" name="PaymentMethod" value="@PaymentMethods.Online" />
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                <div class="pay-form-group">
+                    <label asp-for="SenderPhone" class="pay-label"></label>
+                    <input asp-for="SenderPhone" class="pay-input" autocomplete="tel" placeholder="Phone used to send payment" />
+                    <span asp-validation-for="SenderPhone" class="pay-error"></span>
+                </div>
+
+                <div class="pay-form-group">
+                    <label asp-for="TransactionNumber" class="pay-label"></label>
+                    <input asp-for="TransactionNumber" class="pay-input" placeholder="Reference / transaction ID from SMS or receipt" />
+                    <span asp-validation-for="TransactionNumber" class="pay-error"></span>
+                </div>
+
+                <div class="pay-form-group">
+                    <label asp-for="ReceiptImage" class="pay-label"></label>
+                    <input asp-for="ReceiptImage" class="pay-input" accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+                    <span asp-validation-for="ReceiptImage" class="pay-error"></span>
+                    <div class="pay-hint">JPG, JPEG, or PNG only (max 10 MB).</div>
+                </div>
+
+                <button type="submit" class="btn-pay-submit"><i class="fas fa-check"></i> Submit payment proof</button>
+                <a asp-action="Details" asp-route-id="@Model.ApplicationId" class="btn-pay-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+}
+
+<!-- OFFICE SECTION -->
+<div id="officeSection" style="display:none;">
+    <div class="pay-card">
+        <div class="pay-card-header"><i class="fas fa-building me-2"></i>Pay at Office</div>
+        <div class="pay-card-body">
+            <p class="pay-office-text">You selected <strong>Pay at Office</strong>. No payment proof is required now.</p>
+            <p class="pay-office-text">Bring the exact fee amount (<strong>@Model.Amount.ToString("N2") @Model.Currency</strong>) when you visit for your appointment.</p>
+            <form asp-action="PayAtOffice" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.ApplicationId" />
+                <button type="submit" class="btn-pay-office"><i class="fas fa-building"></i> Confirm — I will pay at the office</button>
+                <a asp-action="Details" asp-route-id="@Model.ApplicationId" class="btn-pay-cancel">Cancel</a>
+            </form>
+        </div>
     </div>
 </div>
 

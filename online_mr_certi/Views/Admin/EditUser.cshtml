@@ -20,6 +20,18 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="NewPassword"></label>
+                <input asp-for="NewPassword" class="form-control" placeholder="•••••••• (ka tag banaan haddii aadan beddeli rabin)" />
+                <span asp-validation-for="NewPassword" class="text-danger small"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmNewPassword"></label>
+                <input asp-for="ConfirmNewPassword" class="form-control" />
+                <span asp-validation-for="ConfirmNewPassword" class="text-danger small"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Role"></label>
                 <select asp-for="Role" class="form-control">
